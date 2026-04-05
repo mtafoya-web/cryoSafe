@@ -161,100 +161,91 @@ class _AnalysisWorkspace extends StatelessWidget {
       ),
       child: LayoutBuilder(
         builder: (context, constraints) {
-          final isWide = constraints.maxWidth >= 1024;
-          final compactDesktop = constraints.maxWidth < 1240;
-
-          if (isWide) {
-            return Padding(
-              padding: const EdgeInsets.all(14),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  SizedBox(
-                    width: compactDesktop ? 340 : 380,
-                    child: SingleChildScrollView(
-                      physics: const BouncingScrollPhysics(),
-                      child: InputPanel(
-                        controller: controller,
-                        compact: true,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: Column(
-                      children: [
-                        ResultCard(
-                          result: controller.result,
-                          meatType: controller.meatType,
-                          fridgeTempF: controller.ambientFridgeTempF,
-                          initialTempF: controller.initialMeatTempF,
-                          thicknessInches: controller.thicknessInches,
-                          summary: controller.safetySummary,
-                          temperatureUnit: controller.temperatureUnit,
-                          compact: true,
-                        ),
-                        const SizedBox(height: 14),
-                        Expanded(
-                          child: TemperatureChart(
-                            points: controller.displayPoints,
-                            unit: controller.temperatureUnit,
-                            frozenThreshold: controller.frozenThresholdDisplay,
-                            safeThreshold: controller.safeThresholdDisplay,
-                            compact: true,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }
-
           return Padding(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(14),
             child: Column(
               children: [
-                Flexible(
-                  flex: 11,
-                  child: SizedBox.expand(
-                    child: SingleChildScrollView(
-                      physics: const BouncingScrollPhysics(),
-                      child: InputPanel(
-                        controller: controller,
-                        compact: true,
-                      ),
-                    ),
-                  ),
+                ResultCard(
+                  result: controller.result,
+                  meatType: controller.meatType,
+                  fridgeTempF: controller.ambientFridgeTempF,
+                  initialTempF: controller.initialMeatTempF,
+                  thicknessInches: controller.thicknessInches,
+                  summary: controller.safetySummary,
+                  temperatureUnit: controller.temperatureUnit,
+                  compact: true,
                 ),
-                const SizedBox(height: 10),
-                Flexible(
-                  flex: 5,
-                  child: SizedBox.expand(
-                    child: ResultCard(
-                      result: controller.result,
-                      meatType: controller.meatType,
-                      fridgeTempF: controller.ambientFridgeTempF,
-                      initialTempF: controller.initialMeatTempF,
-                      thicknessInches: controller.thicknessInches,
-                      summary: controller.safetySummary,
-                      temperatureUnit: controller.temperatureUnit,
-                      compact: true,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 12),
                 Expanded(
-                  flex: 12,
-                  child: SizedBox.expand(
-                    child: TemperatureChart(
-                      points: controller.displayPoints,
-                      unit: controller.temperatureUnit,
-                      frozenThreshold: controller.frozenThresholdDisplay,
-                      safeThreshold: controller.safeThresholdDisplay,
-                      compact: true,
-                    ),
+                  child: LayoutBuilder(
+                    builder: (context, workspaceConstraints) {
+                      final sideBySide = workspaceConstraints.maxWidth >= 760;
+
+                      if (sideBySide) {
+                        final railWidth =
+                            workspaceConstraints.maxWidth >= 1180 ? 360.0 : 320.0;
+
+                        return Row(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            SizedBox(
+                              width: railWidth,
+                              child: SingleChildScrollView(
+                                physics: const BouncingScrollPhysics(),
+                                child: InputPanel(
+                                  controller: controller,
+                                  compact: true,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 14),
+                            Expanded(
+                              child: TemperatureChart(
+                                points: controller.displayPoints,
+                                unit: controller.temperatureUnit,
+                                frozenThreshold:
+                                    controller.frozenThresholdDisplay,
+                                safeThreshold:
+                                    controller.safeThresholdDisplay,
+                                compact: true,
+                              ),
+                            ),
+                          ],
+                        );
+                      }
+
+                      return Column(
+                        children: [
+                          Expanded(
+                            flex: 9,
+                            child: SizedBox.expand(
+                              child: SingleChildScrollView(
+                                physics: const BouncingScrollPhysics(),
+                                child: InputPanel(
+                                  controller: controller,
+                                  compact: true,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          Expanded(
+                            flex: 10,
+                            child: SizedBox.expand(
+                              child: TemperatureChart(
+                                points: controller.displayPoints,
+                                unit: controller.temperatureUnit,
+                                frozenThreshold:
+                                    controller.frozenThresholdDisplay,
+                                safeThreshold:
+                                    controller.safeThresholdDisplay,
+                                compact: true,
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
                   ),
                 ),
               ],
