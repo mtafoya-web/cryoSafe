@@ -13,14 +13,18 @@ class CryoSafeApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (_) => ThawController()..recalculate(),
-      child: MaterialApp(
-        title: 'CryoSafe',
-        debugShowCheckedModeBanner: false,
-        theme: AppTheme.dashboardTheme,
-        darkTheme: AppTheme.dashboardDarkTheme,
-        themeMode: ThemeMode.system,
-        scrollBehavior: const _CryoSafeScrollBehavior(),
-        home: const MainScreen(),
+      child: Consumer<ThawController>(
+        builder: (context, controller, child) {
+          return MaterialApp(
+            title: 'CryoSafe',
+            debugShowCheckedModeBanner: false,
+            theme: AppTheme.dashboardTheme,
+            darkTheme: AppTheme.dashboardDarkTheme,
+            themeMode: controller.themeMode,
+            scrollBehavior: const _CryoSafeScrollBehavior(),
+            home: const MainScreen(),
+          );
+        },
       ),
     );
   }

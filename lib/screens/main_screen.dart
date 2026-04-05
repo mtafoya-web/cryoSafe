@@ -184,6 +184,7 @@ class _HeaderBar extends StatelessWidget {
                   icon: Icons.menu_book_rounded,
                   onTap: onOpenHowTo,
                 ),
+                _ThemeToggleButton(controller: controller),
                 _HeaderTag(
                   label: 'Estimate',
                   value: '${controller.estimatedHours.toStringAsFixed(1)} h',
@@ -216,6 +217,33 @@ class _HeaderNavButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return OutlinedButton.icon(
       onPressed: onTap,
+      icon: Icon(icon, size: 16),
+      label: Text(label),
+      style: OutlinedButton.styleFrom(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+      ),
+    );
+  }
+}
+
+class _ThemeToggleButton extends StatelessWidget {
+  const _ThemeToggleButton({required this.controller});
+
+  final ThawController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    final (icon, label) = switch (controller.themeMode) {
+      ThemeMode.system => (Icons.brightness_auto_rounded, 'System'),
+      ThemeMode.light => (Icons.light_mode_rounded, 'Light'),
+      ThemeMode.dark => (Icons.dark_mode_rounded, 'Dark'),
+    };
+
+    return OutlinedButton.icon(
+      onPressed: controller.cycleThemeMode,
       icon: Icon(icon, size: 16),
       label: Text(label),
       style: OutlinedButton.styleFrom(
@@ -390,49 +418,54 @@ class _ThermoNotes extends StatelessWidget {
                           const SizedBox(height: 12),
                           KeyedSubtree(
                             key: howToKey,
-                            child: Text(
-                              'How to measure thickness',
-                              style: Theme.of(context).textTheme.labelLarge,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'How to measure thickness',
+                                  style: Theme.of(context).textTheme.labelLarge,
+                                ),
+                                const SizedBox(height: 6),
+                                const _NoteBullet(
+                                  text:
+                                      'Lay the cut flat and measure from the top surface to the bottom surface at the thickest point.',
+                                ),
+                                const _NoteBullet(
+                                  text:
+                                      'For tapered cuts like chicken breasts or fish fillets, ignore the thin tail and use the thick center section.',
+                                ),
+                                const _NoteBullet(
+                                  text:
+                                      'If the cut is uneven, enter the maximum thickness because the coldest, thickest section controls thaw time.',
+                                ),
+                                const _NoteBullet(
+                                  text:
+                                      'If several pieces are stacked or touching, measure the thickest individual piece rather than the whole pile.',
+                                ),
+                                const SizedBox(height: 12),
+                                Text(
+                                  'How to measure meat temperature',
+                                  style: Theme.of(context).textTheme.labelLarge,
+                                ),
+                                const SizedBox(height: 6),
+                                const _NoteBullet(
+                                  text:
+                                      'Use an instant-read food thermometer and insert the probe into the center of the thickest section.',
+                                ),
+                                const _NoteBullet(
+                                  text:
+                                      'Avoid bone, large fat pockets, or the tray surface because they can give misleading readings.',
+                                ),
+                                const _NoteBullet(
+                                  text:
+                                      'For thin cuts, insert the probe from the side so the sensing tip lands in the middle instead of poking through.',
+                                ),
+                                const _NoteBullet(
+                                  text:
+                                      'If the cut is large or irregular, take two readings in different spots and use the colder one.',
+                                ),
+                              ],
                             ),
-                          ),
-                          const SizedBox(height: 6),
-                          const _NoteBullet(
-                            text:
-                                'Lay the cut flat and measure from the top surface to the bottom surface at the thickest point.',
-                          ),
-                          const _NoteBullet(
-                            text:
-                                'For tapered cuts like chicken breasts or fish fillets, ignore the thin tail and use the thick center section.',
-                          ),
-                          const _NoteBullet(
-                            text:
-                                'If the cut is uneven, enter the maximum thickness because the coldest, thickest section controls thaw time.',
-                          ),
-                          const _NoteBullet(
-                            text:
-                                'If several pieces are stacked or touching, measure the thickest individual piece rather than the whole pile.',
-                          ),
-                          const SizedBox(height: 12),
-                          Text(
-                            'How to measure meat temperature',
-                            style: Theme.of(context).textTheme.labelLarge,
-                          ),
-                          const SizedBox(height: 6),
-                          const _NoteBullet(
-                            text:
-                                'Use an instant-read food thermometer and insert the probe into the center of the thickest section.',
-                          ),
-                          const _NoteBullet(
-                            text:
-                                'Avoid bone, large fat pockets, or the tray surface because they can give misleading readings.',
-                          ),
-                          const _NoteBullet(
-                            text:
-                                'For thin cuts, insert the probe from the side so the sensing tip lands in the middle instead of poking through.',
-                          ),
-                          const _NoteBullet(
-                            text:
-                                'If the cut is large or irregular, take two readings in different spots and use the colder one.',
                           ),
                         ],
                       ),

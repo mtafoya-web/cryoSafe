@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 import '../models/meat_type.dart';
 import '../models/temperature_point.dart';
@@ -17,6 +17,7 @@ class ThawController extends ChangeNotifier {
   double _thicknessInches = 1.5;
   MeatType _meatType = MeatType.chicken;
   TemperatureUnit _temperatureUnit = TemperatureUnit.fahrenheit;
+  ThemeMode _themeMode = ThemeMode.system;
 
   ThawResult _result = const ThawResult.empty();
 
@@ -27,6 +28,7 @@ class ThawController extends ChangeNotifier {
   double get thicknessInches => _thicknessInches;
   MeatType get meatType => _meatType;
   TemperatureUnit get temperatureUnit => _temperatureUnit;
+  ThemeMode get themeMode => _themeMode;
   double get estimatedHours => _result.hoursToSafeTemp;
   double get chartMaxHours =>
       points.isEmpty ? 12 : points.last.hours.clamp(6, 48).toDouble();
@@ -97,6 +99,18 @@ class ThawController extends ChangeNotifier {
       return;
     }
     _temperatureUnit = value;
+    notifyListeners();
+  }
+
+  void cycleThemeMode() {
+    switch (_themeMode) {
+      case ThemeMode.system:
+        _themeMode = ThemeMode.light;
+      case ThemeMode.light:
+        _themeMode = ThemeMode.dark;
+      case ThemeMode.dark:
+        _themeMode = ThemeMode.system;
+    }
     notifyListeners();
   }
 
