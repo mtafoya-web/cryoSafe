@@ -19,7 +19,7 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   final GlobalKey _analysisKey = GlobalKey();
-  final GlobalKey _notesKey = GlobalKey();
+  final GlobalKey _howToKey = GlobalKey();
 
   Future<void> _scrollTo(GlobalKey key) async {
     final context = key.currentContext;
@@ -64,9 +64,9 @@ class _MainScreenState extends State<MainScreen> {
                     child: _ScreenContent(
                       controller: controller,
                       analysisKey: _analysisKey,
-                      notesKey: _notesKey,
+                      howToKey: _howToKey,
                       onOpenSimulation: () => _scrollTo(_analysisKey),
-                      onOpenHowTo: () => _scrollTo(_notesKey),
+                      onOpenHowTo: () => _scrollTo(_howToKey),
                     ),
                   ),
                 ),
@@ -83,14 +83,14 @@ class _ScreenContent extends StatelessWidget {
   const _ScreenContent({
     required this.controller,
     required this.analysisKey,
-    required this.notesKey,
+    required this.howToKey,
     required this.onOpenSimulation,
     required this.onOpenHowTo,
   });
 
   final ThawController controller;
   final GlobalKey analysisKey;
-  final GlobalKey notesKey;
+  final GlobalKey howToKey;
   final VoidCallback onOpenSimulation;
   final VoidCallback onOpenHowTo;
 
@@ -112,9 +112,9 @@ class _ScreenContent extends StatelessWidget {
           child: _AnalysisWorkspace(controller: controller),
         ),
         const SizedBox(height: 8),
-        KeyedSubtree(
-          key: notesKey,
-          child: _ThermoNotes(controller: controller),
+        _ThermoNotes(
+          controller: controller,
+          howToKey: howToKey,
         ),
       ],
     );
@@ -343,9 +343,13 @@ class _AnalysisWorkspace extends StatelessWidget {
 }
 
 class _ThermoNotes extends StatelessWidget {
-  const _ThermoNotes({required this.controller});
+  const _ThermoNotes({
+    required this.controller,
+    required this.howToKey,
+  });
 
   final ThawController controller;
+  final GlobalKey howToKey;
 
   @override
   Widget build(BuildContext context) {
@@ -384,9 +388,12 @@ class _ThermoNotes extends StatelessWidget {
                             style: Theme.of(context).textTheme.bodyMedium,
                           ),
                           const SizedBox(height: 12),
-                          Text(
-                            'How to measure thickness',
-                            style: Theme.of(context).textTheme.labelLarge,
+                          KeyedSubtree(
+                            key: howToKey,
+                            child: Text(
+                              'How to measure thickness',
+                              style: Theme.of(context).textTheme.labelLarge,
+                            ),
                           ),
                           const SizedBox(height: 6),
                           const _NoteBullet(

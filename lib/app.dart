@@ -17,6 +17,8 @@ class CryoSafeApp extends StatelessWidget {
         title: 'CryoSafe',
         debugShowCheckedModeBanner: false,
         theme: AppTheme.dashboardTheme,
+        darkTheme: AppTheme.dashboardDarkTheme,
+        themeMode: ThemeMode.system,
         scrollBehavior: const _CryoSafeScrollBehavior(),
         home: const MainScreen(),
       ),

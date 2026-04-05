@@ -16,94 +16,115 @@ class AppTheme {
   static const mutedTextColor = Color(0xFF475569);
   static const borderColor = Color(0xFFDCE3EC);
   static const softShadow = Color(0x140F172A);
+  static const darkShellColor = Color(0xFF08111F);
+  static const darkPanelColor = Color(0xFF0F1A2B);
+  static const darkSurfaceColor = Color(0xFF101C30);
+  static const darkBorderColor = Color(0xFF22314C);
+  static const darkInkColor = Color(0xFFF3F7FF);
+  static const darkMutedTextColor = Color(0xFFA8B6CC);
+  static const darkSoftShadow = Color(0x66000000);
 
-  static ThemeData get dashboardTheme {
+  static ThemeData get dashboardTheme => _buildTheme(Brightness.light);
+
+  static ThemeData get dashboardDarkTheme => _buildTheme(Brightness.dark);
+
+  static ThemeData _buildTheme(Brightness brightness) {
+    final isDark = brightness == Brightness.dark;
     final colorScheme = ColorScheme.fromSeed(
       seedColor: frozenBlue,
       primary: frozenBlue,
       secondary: safeGreen,
       error: dangerRed,
-      surface: Colors.white,
+      brightness: brightness,
+      surface: isDark ? darkSurfaceColor : Colors.white,
     );
+
+    final scaffoldColor = isDark ? darkShellColor : shellColor;
+    final surfaceColor = isDark ? darkSurfaceColor : Colors.white;
+    final textColor = isDark ? darkInkColor : inkColor;
+    final mutedColor = isDark ? darkMutedTextColor : mutedTextColor;
+    final outlineColor = isDark ? darkBorderColor : borderColor;
+    final shadowColor = isDark ? darkSoftShadow : softShadow;
 
     return ThemeData(
       useMaterial3: true,
       colorScheme: colorScheme,
-      scaffoldBackgroundColor: shellColor,
-      appBarTheme: const AppBarTheme(
+      brightness: brightness,
+      scaffoldBackgroundColor: scaffoldColor,
+      appBarTheme: AppBarTheme(
         backgroundColor: Colors.transparent,
-        foregroundColor: inkColor,
+        foregroundColor: textColor,
         elevation: 0,
         centerTitle: false,
         titleTextStyle: TextStyle(
           fontSize: 20,
           fontWeight: FontWeight.w700,
-          color: inkColor,
+          color: textColor,
           letterSpacing: -0.3,
         ),
       ),
-      textTheme: const TextTheme(
+      textTheme: TextTheme(
         headlineLarge: TextStyle(
           fontSize: 46,
           fontWeight: FontWeight.w800,
-          color: inkColor,
+          color: textColor,
           letterSpacing: -1.4,
         ),
         headlineMedium: TextStyle(
           fontSize: 32,
           fontWeight: FontWeight.w700,
-          color: inkColor,
+          color: textColor,
           letterSpacing: -0.8,
         ),
         titleLarge: TextStyle(
           fontSize: 22,
           fontWeight: FontWeight.w700,
-          color: inkColor,
+          color: textColor,
           letterSpacing: -0.5,
         ),
         titleMedium: TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.w600,
-          color: inkColor,
+          color: textColor,
         ),
         bodyLarge: TextStyle(
           fontSize: 16,
           height: 1.45,
-          color: inkColor,
+          color: textColor,
         ),
         bodyMedium: TextStyle(
           fontSize: 14,
           height: 1.5,
-          color: mutedTextColor,
+          color: mutedColor,
         ),
         labelLarge: TextStyle(
           fontSize: 14,
           fontWeight: FontWeight.w600,
-          color: inkColor,
+          color: textColor,
         ),
       ),
       cardTheme: CardThemeData(
-        color: Colors.white,
+        color: surfaceColor,
         elevation: 0,
         margin: EdgeInsets.zero,
         shape: RoundedRectangleBorder(
-          side: const BorderSide(color: borderColor),
+          side: BorderSide(color: outlineColor),
           borderRadius: BorderRadius.circular(28),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: const Color(0xFFFDFEFF),
-        labelStyle: const TextStyle(color: mutedTextColor),
+        fillColor: isDark ? darkPanelColor : const Color(0xFFFDFEFF),
+        labelStyle: TextStyle(color: mutedColor),
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(18),
-          borderSide: const BorderSide(color: borderColor),
+          borderSide: BorderSide(color: outlineColor),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(18),
-          borderSide: const BorderSide(color: borderColor),
+          borderSide: BorderSide(color: outlineColor),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(18),
@@ -116,14 +137,18 @@ class AppTheme {
         thumbShape: RoundSliderThumbShape(enabledThumbRadius: 9),
       ),
       chipTheme: ChipThemeData(
-        side: const BorderSide(color: borderColor),
+        side: BorderSide(color: outlineColor),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(999),
         ),
-        backgroundColor: Colors.white,
-        selectedColor: chartBlueTint,
+        backgroundColor: surfaceColor,
+        selectedColor: isDark
+            ? frozenBlue.withValues(alpha: 0.18)
+            : chartBlueTint,
       ),
-      dividerColor: borderColor,
+      dividerColor: outlineColor,
+      shadowColor: shadowColor,
+      canvasColor: surfaceColor,
     );
   }
 }
