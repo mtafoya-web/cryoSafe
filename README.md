@@ -100,6 +100,15 @@ Deploy the generated output from:
 build/web/
 ```
 
+For the connected Vercel project in this repo, GitHub production deploys are configured to serve the committed `build/web` directory via `vercel.json`. That means the release flow is:
+
+```bash
+flutter build web
+git add build/web vercel.json
+git commit -m "Update web build"
+git push origin main
+```
+
 Good hosting options:
 
 - Netlify
