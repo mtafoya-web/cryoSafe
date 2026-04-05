@@ -33,7 +33,6 @@ class MainScreen extends StatelessWidget {
             child: LayoutBuilder(
               builder: (context, constraints) {
                 final isWide = constraints.maxWidth >= 1080;
-                final useViewportMobile = !isWide && constraints.maxHeight >= 760;
                 final useCompactDesktop =
                     constraints.maxWidth < 1320 || constraints.maxHeight < 860;
                 final desktopRailWidth = useCompactDesktop ? 340.0 : 388.0;
@@ -41,98 +40,76 @@ class MainScreen extends StatelessWidget {
                 return Center(
                   child: ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 1440),
-                    child: isWide
-                        ? LayoutBuilder(
-                            builder: (context, desktopConstraints) {
-                              return SingleChildScrollView(
-                                primary: true,
-                                padding:
-                                    const EdgeInsets.fromLTRB(24, 14, 24, 28),
-                                physics: const AlwaysScrollableScrollPhysics(
-                                  parent: BouncingScrollPhysics(),
-                                ),
-                                child: ConstrainedBox(
-                                  constraints: BoxConstraints(
-                                    minHeight: desktopConstraints.maxHeight,
-                                  ),
-                                  child: Column(
-                                    children: [
-                                      _DashboardHero(
+                    child: ListView(
+                      primary: true,
+                      padding: EdgeInsets.fromLTRB(
+                        isWide ? 24 : 16,
+                        14,
+                        isWide ? 24 : 16,
+                        28,
+                      ),
+                      physics: const AlwaysScrollableScrollPhysics(
+                        parent: BouncingScrollPhysics(),
+                      ),
+                      children: [
+                        _DashboardHero(
+                          controller: controller,
+                          compact: !isWide || useCompactDesktop,
+                        ),
+                        SizedBox(height: isWide ? 22 : 16),
+                        AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 260),
+                          child: isWide
+                              ? Row(
+                                  key: const ValueKey('desktop-browser-layout'),
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    SizedBox(
+                                      width: desktopRailWidth,
+                                      child: InputPanel(
                                         controller: controller,
                                         compact: useCompactDesktop,
                                       ),
-                                      SizedBox(
-                                        height: useCompactDesktop ? 18 : 22,
-                                      ),
-                                      Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                    ),
+                                    SizedBox(
+                                      width: useCompactDesktop ? 20 : 28,
+                                    ),
+                                    Expanded(
+                                      child: Column(
                                         children: [
+                                          ResultCard(
+                                            result: controller.result,
+                                            meatType: controller.meatType,
+                                            fridgeTempF:
+                                                controller.ambientFridgeTempF,
+                                            initialTempF:
+                                                controller.initialMeatTempF,
+                                            thicknessInches:
+                                                controller.thicknessInches,
+                                            summary:
+                                                controller.safetySummary,
+                                            compact: useCompactDesktop,
+                                          ),
                                           SizedBox(
-                                            width: desktopRailWidth,
-                                            child: InputPanel(
-                                              controller: controller,
+                                            height:
+                                                useCompactDesktop ? 16 : 20,
+                                          ),
+                                          SizedBox(
+                                            height:
+                                                useCompactDesktop ? 620 : 720,
+                                            child: TemperatureChart(
+                                              points: controller.points,
                                               compact: useCompactDesktop,
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width:
-                                                useCompactDesktop ? 20 : 28,
-                                          ),
-                                          Expanded(
-                                            child: Column(
-                                              children: [
-                                                ResultCard(
-                                                  result: controller.result,
-                                                  meatType: controller.meatType,
-                                                  fridgeTempF: controller
-                                                      .ambientFridgeTempF,
-                                                  initialTempF: controller
-                                                      .initialMeatTempF,
-                                                  thicknessInches: controller
-                                                      .thicknessInches,
-                                                  summary: controller
-                                                      .safetySummary,
-                                                  compact:
-                                                      useCompactDesktop,
-                                                ),
-                                                SizedBox(
-                                                  height: useCompactDesktop
-                                                      ? 16
-                                                      : 20,
-                                                ),
-                                                SizedBox(
-                                                  height: useCompactDesktop
-                                                      ? 620
-                                                      : 700,
-                                                  child: TemperatureChart(
-                                                    points: controller.points,
-                                                    compact:
-                                                        useCompactDesktop,
-                                                  ),
-                                                ),
-                                              ],
                                             ),
                                           ),
                                         ],
                                       ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            },
-                          )
-                        : useViewportMobile
-                            ? Padding(
-                                padding:
-                                    const EdgeInsets.fromLTRB(16, 12, 16, 16),
-                                child: Column(
-                                  children: [
-                                    _DashboardHero(
-                                      controller: controller,
-                                      compact: true,
                                     ),
-                                    const SizedBox(height: 14),
+                                  ],
+                                )
+                              : Column(
+                                  key: const ValueKey('mobile-browser-layout'),
+                                  children: [
                                     InputPanel(
                                       controller: controller,
                                       compact: true,
@@ -151,46 +128,8 @@ class MainScreen extends StatelessWidget {
                                       compact: true,
                                     ),
                                     const SizedBox(height: 12),
-                                    Expanded(
-                                      child: TemperatureChart(
-                                        points: controller.points,
-                                        compact: true,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              )
-                            : ListView(
-                            padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
-                            children: [
-                              _DashboardHero(
-                                controller: controller,
-                                compact: true,
-                              ),
-                              const SizedBox(height: 16),
-                              AnimatedSwitcher(
-                                duration: const Duration(milliseconds: 260),
-                                child: Column(
-                                  key: const ValueKey('mobile-layout'),
-                                  children: [
-                                    InputPanel(
-                                      controller: controller,
-                                      compact: true,
-                                    ),
-                                    const SizedBox(height: 12),
-                                    ResultCard(
-                                      result: controller.result,
-                                      meatType: controller.meatType,
-                                      fridgeTempF: controller.ambientFridgeTempF,
-                                      initialTempF: controller.initialMeatTempF,
-                                      thicknessInches:
-                                          controller.thicknessInches,
-                                      summary: controller.safetySummary,
-                                      compact: true,
-                                    ),
-                                    const SizedBox(height: 12),
                                     SizedBox(
-                                      height: 320,
+                                      height: 360,
                                       child: TemperatureChart(
                                         points: controller.points,
                                         compact: true,
@@ -198,9 +137,9 @@ class MainScreen extends StatelessWidget {
                                     ),
                                   ],
                                 ),
-                              ),
-                            ],
-                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 );
               },
