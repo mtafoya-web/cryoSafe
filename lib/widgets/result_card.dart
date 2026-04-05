@@ -126,14 +126,16 @@ class ResultCard extends StatelessWidget {
                       unit: temperatureUnit,
                     ),
                   ),
-                  _MetricPill(
-                    label: 'Thickness',
-                    value: '${formatShortNumber(thicknessInches)} in',
-                  ),
-                  _MetricPill(
-                    label: 'Phase plateau',
-                    value: formatCompactDuration(result.plateauDurationHours),
-                  ),
+                  if (!compact)
+                    _MetricPill(
+                      label: 'Thickness',
+                      value: '${formatShortNumber(thicknessInches)} in',
+                    ),
+                  if (!compact)
+                    _MetricPill(
+                      label: 'Phase plateau',
+                      value: formatCompactDuration(result.plateauDurationHours),
+                    ),
                 ],
               ),
             ],
