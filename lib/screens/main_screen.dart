@@ -42,64 +42,85 @@ class MainScreen extends StatelessWidget {
                   child: ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 1440),
                     child: isWide
-                        ? SingleChildScrollView(
-                            padding: const EdgeInsets.fromLTRB(24, 14, 24, 28),
-                            physics: const BouncingScrollPhysics(),
-                            child: Column(
-                              children: [
-                                _DashboardHero(
-                                  controller: controller,
-                                  compact: useCompactDesktop,
+                        ? LayoutBuilder(
+                            builder: (context, desktopConstraints) {
+                              return SingleChildScrollView(
+                                primary: true,
+                                padding:
+                                    const EdgeInsets.fromLTRB(24, 14, 24, 28),
+                                physics: const AlwaysScrollableScrollPhysics(
+                                  parent: BouncingScrollPhysics(),
                                 ),
-                                SizedBox(height: useCompactDesktop ? 18 : 22),
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    SizedBox(
-                                      width: desktopRailWidth,
-                                      child: InputPanel(
+                                child: ConstrainedBox(
+                                  constraints: BoxConstraints(
+                                    minHeight: desktopConstraints.maxHeight,
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      _DashboardHero(
                                         controller: controller,
                                         compact: useCompactDesktop,
                                       ),
-                                    ),
-                                    SizedBox(
-                                      width: useCompactDesktop ? 20 : 28,
-                                    ),
-                                    Expanded(
-                                      child: Column(
+                                      SizedBox(
+                                        height: useCompactDesktop ? 18 : 22,
+                                      ),
+                                      Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
-                                          ResultCard(
-                                            result: controller.result,
-                                            meatType: controller.meatType,
-                                            fridgeTempF: controller
-                                                .ambientFridgeTempF,
-                                            initialTempF:
-                                                controller.initialMeatTempF,
-                                            thicknessInches:
-                                                controller.thicknessInches,
-                                            summary:
-                                                controller.safetySummary,
-                                            compact: useCompactDesktop,
-                                          ),
                                           SizedBox(
-                                            height:
-                                                useCompactDesktop ? 16 : 20,
-                                          ),
-                                          SizedBox(
-                                            height:
-                                                useCompactDesktop ? 620 : 700,
-                                            child: TemperatureChart(
-                                              points: controller.points,
+                                            width: desktopRailWidth,
+                                            child: InputPanel(
+                                              controller: controller,
                                               compact: useCompactDesktop,
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width:
+                                                useCompactDesktop ? 20 : 28,
+                                          ),
+                                          Expanded(
+                                            child: Column(
+                                              children: [
+                                                ResultCard(
+                                                  result: controller.result,
+                                                  meatType: controller.meatType,
+                                                  fridgeTempF: controller
+                                                      .ambientFridgeTempF,
+                                                  initialTempF: controller
+                                                      .initialMeatTempF,
+                                                  thicknessInches: controller
+                                                      .thicknessInches,
+                                                  summary: controller
+                                                      .safetySummary,
+                                                  compact:
+                                                      useCompactDesktop,
+                                                ),
+                                                SizedBox(
+                                                  height: useCompactDesktop
+                                                      ? 16
+                                                      : 20,
+                                                ),
+                                                SizedBox(
+                                                  height: useCompactDesktop
+                                                      ? 620
+                                                      : 700,
+                                                  child: TemperatureChart(
+                                                    points: controller.points,
+                                                    compact:
+                                                        useCompactDesktop,
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                           ),
                                         ],
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                              ],
-                            ),
+                              );
+                            },
                           )
                         : useViewportMobile
                             ? Padding(
