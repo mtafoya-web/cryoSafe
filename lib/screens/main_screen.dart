@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/link.dart';
 
 import '../controllers/thaw_controller.dart';
 import '../theme/app_theme.dart';
@@ -225,27 +226,22 @@ class _ThermoNotes extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Theme(
-      data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-      child: Card(
-        child: ExpansionTile(
-          initiallyExpanded: false,
-          maintainState: false,
-          dense: true,
-          visualDensity: const VisualDensity(vertical: -2),
-          tilePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
-          childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 14),
-          title: Text(
-            'Thermodynamics notes',
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-          subtitle: Text(
-            'Newton cooling with a thaw plateau near 32°F/0°C.',
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 14),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Text(
+              'Thermodynamics notes',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Newton cooling with a thaw plateau near 32°F/0°C.',
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+            const SizedBox(height: 14),
             LayoutBuilder(
               builder: (context, constraints) {
                 final wide = constraints.maxWidth >= 1080;
@@ -502,72 +498,88 @@ class _ResourceTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: AppTheme.borderColor),
-        boxShadow: [
-          BoxShadow(
-            color: AppTheme.softShadow.withValues(alpha: 0.28),
-            blurRadius: 18,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(14),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Container(
-                  width: 30,
-                  height: 30,
-                  decoration: BoxDecoration(
-                    color: AppTheme.chartGreenTint,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: const Icon(
-                    Icons.open_in_new_rounded,
-                    size: 16,
-                    color: AppTheme.safeGreen,
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    title,
-                    style: Theme.of(context).textTheme.labelLarge,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 4),
-            Text(
-              description,
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
-            const SizedBox(height: 8),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+    return Link(
+      uri: Uri.parse(url),
+      target: LinkTarget.blank,
+      builder: (context, followLink) {
+        return Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: followLink,
+            borderRadius: BorderRadius.circular(18),
+            child: Ink(
               decoration: BoxDecoration(
-                color: AppTheme.panelColor,
-                borderRadius: BorderRadius.circular(12),
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(18),
                 border: Border.all(color: AppTheme.borderColor),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppTheme.softShadow.withValues(alpha: 0.28),
+                    blurRadius: 18,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
               ),
-              child: Text(
-                url,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: AppTheme.electricBlue,
+              child: Padding(
+                padding: const EdgeInsets.all(14),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          width: 30,
+                          height: 30,
+                          decoration: BoxDecoration(
+                            color: AppTheme.chartGreenTint,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: const Icon(
+                            Icons.open_in_new_rounded,
+                            size: 16,
+                            color: AppTheme.safeGreen,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            title,
+                            style: Theme.of(context).textTheme.labelLarge,
+                          ),
+                        ),
+                      ],
                     ),
+                    const SizedBox(height: 4),
+                    Text(
+                      description,
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                    const SizedBox(height: 8),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppTheme.panelColor,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: AppTheme.borderColor),
+                      ),
+                      child: Text(
+                        url,
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: AppTheme.electricBlue,
+                            ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }

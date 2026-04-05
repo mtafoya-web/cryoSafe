@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/link.dart';
 
 import '../theme/app_theme.dart';
 
@@ -89,17 +90,32 @@ class VideoEmbed extends StatelessWidget {
             const SizedBox(height: 10),
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
               decoration: BoxDecoration(
                 color: AppTheme.panelColor,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: AppTheme.borderColor),
               ),
-              child: Text(
-                watchUrl,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: AppTheme.electricBlue,
+              child: Link(
+                uri: Uri.parse(watchUrl),
+                target: LinkTarget.blank,
+                builder: (context, followLink) {
+                  return InkWell(
+                    onTap: followLink,
+                    borderRadius: BorderRadius.circular(12),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 8,
+                      ),
+                      child: Text(
+                        watchUrl,
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: AppTheme.electricBlue,
+                            ),
+                      ),
                     ),
+                  );
+                },
               ),
             ),
           ],
