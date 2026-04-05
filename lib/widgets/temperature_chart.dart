@@ -9,9 +9,11 @@ class TemperatureChart extends StatelessWidget {
   const TemperatureChart({
     super.key,
     required this.points,
+    this.compact = false,
   });
 
   final List<TemperaturePoint> points;
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +42,7 @@ class TemperatureChart extends StatelessWidget {
           ],
         ),
         child: Padding(
-          padding: const EdgeInsets.all(24),
+          padding: EdgeInsets.all(compact ? 18 : 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -55,15 +57,17 @@ class TemperatureChart extends StatelessWidget {
                           'Temperature vs Time',
                           style: Theme.of(context).textTheme.titleLarge,
                         ),
-                        const SizedBox(height: 6),
-                        Text(
-                          'A cleaner visual read of frozen, thaw, and danger bands with live temperature interpolation.',
-                          style: Theme.of(context).textTheme.bodyMedium,
-                        ),
+                        if (!compact) ...[
+                          const SizedBox(height: 6),
+                          Text(
+                            'A cleaner visual read of frozen, thaw, and danger bands with live temperature interpolation.',
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                        ],
                       ],
                     ),
                   ),
-                  const SizedBox(width: 16),
+                  SizedBox(width: compact ? 10 : 16),
                   const Wrap(
                     spacing: 8,
                     runSpacing: 8,
@@ -75,7 +79,7 @@ class TemperatureChart extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 18),
+              SizedBox(height: compact ? 12 : 18),
               Expanded(
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(24),
@@ -87,7 +91,12 @@ class TemperatureChart extends StatelessWidget {
                       borderRadius: BorderRadius.circular(24),
                     ),
                     child: Padding(
-                      padding: const EdgeInsets.fromLTRB(10, 14, 14, 8),
+                      padding: EdgeInsets.fromLTRB(
+                        compact ? 6 : 10,
+                        compact ? 10 : 14,
+                        compact ? 10 : 14,
+                        compact ? 4 : 8,
+                      ),
                       child: LineChart(
                         LineChartData(
                           minX: 0,
@@ -203,30 +212,30 @@ class TemperatureChart extends StatelessWidget {
                             leftTitles: AxisTitles(
                               axisNameWidget: Text(
                                 'Temp (°F)',
-                                style: Theme.of(context).textTheme.bodyMedium,
+                                style: Theme.of(context).textTheme.bodySmall,
                               ),
                               sideTitles: SideTitles(
                                 showTitles: true,
-                                reservedSize: 44,
+                                reservedSize: compact ? 34 : 44,
                                 interval: 10,
                                 getTitlesWidget: (value, meta) => Text(
                                   value.toInt().toString(),
-                                  style: Theme.of(context).textTheme.bodyMedium,
+                                  style: Theme.of(context).textTheme.bodySmall,
                                 ),
                               ),
                             ),
                             bottomTitles: AxisTitles(
                               axisNameWidget: Text(
                                 'Time (hours)',
-                                style: Theme.of(context).textTheme.bodyMedium,
+                                style: Theme.of(context).textTheme.bodySmall,
                               ),
                               sideTitles: SideTitles(
                                 showTitles: true,
-                                reservedSize: 32,
+                                reservedSize: compact ? 26 : 32,
                                 interval: maxX > 18 ? 4 : 2,
                                 getTitlesWidget: (value, meta) => Text(
                                   '${value.toInt()}h',
-                                  style: Theme.of(context).textTheme.bodyMedium,
+                                  style: Theme.of(context).textTheme.bodySmall,
                                 ),
                               ),
                             ),

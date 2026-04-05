@@ -13,7 +13,6 @@ class MainScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = context.watch<ThawController>();
-    final isWide = MediaQuery.of(context).size.width >= 1080;
 
     return Scaffold(
       appBar: AppBar(
@@ -31,86 +30,151 @@ class MainScreen extends StatelessWidget {
           const _BackgroundGlow(),
           SafeArea(
             top: false,
-            child: Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 1320),
-                child: ListView(
-                  padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
-                  children: [
-                    _DashboardHero(controller: controller),
-                    const SizedBox(height: 24),
-                    AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 260),
-                      child: isWide
-                          ? Row(
-                              key: const ValueKey('desktop-layout'),
-                              crossAxisAlignment: CrossAxisAlignment.start,
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final isWide = constraints.maxWidth >= 1080;
+                final useViewportMobile = !isWide && constraints.maxHeight >= 760;
+
+                return Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 1320),
+                    child: isWide
+                        ? Padding(
+                            padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
+                            child: Column(
                               children: [
-                                SizedBox(
-                                  width: 360,
-                                  child: Column(
-                                    children: [
-                                      InputPanel(controller: controller),
-                                      const SizedBox(height: 20),
-                                      _InsightPanel(controller: controller),
-                                    ],
-                                  ),
+                                _DashboardHero(
+                                  controller: controller,
+                                  compact: true,
                                 ),
-                                const SizedBox(width: 24),
+                                const SizedBox(height: 18),
                                 Expanded(
-                                  child: Column(
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.stretch,
                                     children: [
-                                      ResultCard(
-                                        result: controller.result,
-                                        meatType: controller.meatType,
-                                        fridgeTempF:
-                                            controller.ambientFridgeTempF,
-                                        initialTempF:
-                                            controller.initialMeatTempF,
-                                        thicknessInches:
-                                            controller.thicknessInches,
-                                        summary: controller.safetySummary,
-                                      ),
-                                      const SizedBox(height: 20),
                                       SizedBox(
-                                        height: 560,
-                                        child: TemperatureChart(
-                                          points: controller.points,
+                                        width: 340,
+                                        child: InputPanel(
+                                          controller: controller,
+                                          compact: true,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 20),
+                                      Expanded(
+                                        child: Column(
+                                          children: [
+                                            ResultCard(
+                                              result: controller.result,
+                                              meatType: controller.meatType,
+                                              fridgeTempF: controller
+                                                  .ambientFridgeTempF,
+                                              initialTempF:
+                                                  controller.initialMeatTempF,
+                                              thicknessInches:
+                                                  controller.thicknessInches,
+                                              summary:
+                                                  controller.safetySummary,
+                                              compact: true,
+                                            ),
+                                            const SizedBox(height: 16),
+                                            Expanded(
+                                              child: TemperatureChart(
+                                                points: controller.points,
+                                                compact: true,
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ),
                                     ],
                                   ),
                                 ),
                               ],
-                            )
-                          : Column(
-                              key: const ValueKey('mobile-layout'),
-                              children: [
-                                InputPanel(controller: controller),
-                                const SizedBox(height: 16),
-                                ResultCard(
-                                  result: controller.result,
-                                  meatType: controller.meatType,
-                                  fridgeTempF: controller.ambientFridgeTempF,
-                                  initialTempF: controller.initialMeatTempF,
-                                  thicknessInches: controller.thicknessInches,
-                                  summary: controller.safetySummary,
-                                ),
-                                const SizedBox(height: 16),
-                                SizedBox(
-                                  height: 420,
-                                  child: TemperatureChart(
-                                    points: controller.points,
-                                  ),
-                                ),
-                                const SizedBox(height: 16),
-                                _InsightPanel(controller: controller),
-                              ],
                             ),
-                    ),
-                  ],
-                ),
-              ),
+                          )
+                        : useViewportMobile
+                            ? Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(16, 12, 16, 16),
+                                child: Column(
+                                  children: [
+                                    _DashboardHero(
+                                      controller: controller,
+                                      compact: true,
+                                    ),
+                                    const SizedBox(height: 14),
+                                    InputPanel(
+                                      controller: controller,
+                                      compact: true,
+                                    ),
+                                    const SizedBox(height: 12),
+                                    ResultCard(
+                                      result: controller.result,
+                                      meatType: controller.meatType,
+                                      fridgeTempF:
+                                          controller.ambientFridgeTempF,
+                                      initialTempF:
+                                          controller.initialMeatTempF,
+                                      thicknessInches:
+                                          controller.thicknessInches,
+                                      summary: controller.safetySummary,
+                                      compact: true,
+                                    ),
+                                    const SizedBox(height: 12),
+                                    Expanded(
+                                      child: TemperatureChart(
+                                        points: controller.points,
+                                        compact: true,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            : ListView(
+                            padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
+                            children: [
+                              _DashboardHero(
+                                controller: controller,
+                                compact: true,
+                              ),
+                              const SizedBox(height: 16),
+                              AnimatedSwitcher(
+                                duration: const Duration(milliseconds: 260),
+                                child: Column(
+                                  key: const ValueKey('mobile-layout'),
+                                  children: [
+                                    InputPanel(
+                                      controller: controller,
+                                      compact: true,
+                                    ),
+                                    const SizedBox(height: 12),
+                                    ResultCard(
+                                      result: controller.result,
+                                      meatType: controller.meatType,
+                                      fridgeTempF: controller.ambientFridgeTempF,
+                                      initialTempF: controller.initialMeatTempF,
+                                      thicknessInches:
+                                          controller.thicknessInches,
+                                      summary: controller.safetySummary,
+                                      compact: true,
+                                    ),
+                                    const SizedBox(height: 12),
+                                    SizedBox(
+                                      height: 320,
+                                      child: TemperatureChart(
+                                        points: controller.points,
+                                        compact: true,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                  ),
+                );
+              },
             ),
           ),
         ],
@@ -195,15 +259,19 @@ class _GlowBlob extends StatelessWidget {
 }
 
 class _DashboardHero extends StatelessWidget {
-  const _DashboardHero({required this.controller});
+  const _DashboardHero({
+    required this.controller,
+    this.compact = false,
+  });
 
   final ThawController controller;
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(34),
+        borderRadius: BorderRadius.circular(compact ? 28 : 34),
         border: Border.all(color: Colors.white.withValues(alpha: 0.75)),
         gradient: LinearGradient(
           begin: Alignment.topLeft,
@@ -223,7 +291,7 @@ class _DashboardHero extends StatelessWidget {
         ],
       ),
       child: Padding(
-        padding: const EdgeInsets.all(28),
+        padding: EdgeInsets.all(compact ? 22 : 28),
         child: LayoutBuilder(
           builder: (context, constraints) {
             final stacked = constraints.maxWidth < 900;
@@ -232,8 +300,8 @@ class _DashboardHero extends StatelessWidget {
                 ? Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _HeroCopy(controller: controller),
-                      const SizedBox(height: 20),
+                      _HeroCopy(controller: controller, compact: compact),
+                      SizedBox(height: compact ? 14 : 20),
                       _HeroStats(controller: controller),
                     ],
                   )
@@ -242,7 +310,8 @@ class _DashboardHero extends StatelessWidget {
                     children: [
                       Expanded(
                         flex: 6,
-                        child: _HeroCopy(controller: controller),
+                        child:
+                            _HeroCopy(controller: controller, compact: compact),
                       ),
                       const SizedBox(width: 24),
                       Expanded(
@@ -259,9 +328,13 @@ class _DashboardHero extends StatelessWidget {
 }
 
 class _HeroCopy extends StatelessWidget {
-  const _HeroCopy({required this.controller});
+  const _HeroCopy({
+    required this.controller,
+    this.compact = false,
+  });
 
   final ThawController controller;
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
@@ -287,35 +360,37 @@ class _HeroCopy extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(height: 18),
+        SizedBox(height: compact ? 12 : 18),
         Text(
           'Beautifully clear refrigerator thaw analysis for real-world kitchen safety.',
           style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                fontSize: 42,
+                fontSize: compact ? 30 : 42,
                 height: 1.02,
               ),
         ),
-        const SizedBox(height: 14),
+        SizedBox(height: compact ? 10 : 14),
         ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 620),
           child: Text(
             'Track how temperature rises through the frozen band, stalls around 32°F, and eventually reaches the 41°F safety threshold with a cleaner, SaaS-style dashboard.',
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                   color: AppTheme.mutedTextColor,
-                  height: 1.55,
+                  height: compact ? 1.4 : 1.55,
                 ),
           ),
         ),
-        const SizedBox(height: 22),
-        const Wrap(
-          spacing: 10,
-          runSpacing: 10,
-          children: [
-            _HeroPill(label: 'Live sliders'),
-            _HeroPill(label: 'Phase-change model'),
-            _HeroPill(label: 'Responsive layout'),
-          ],
-        ),
+        if (!compact) ...[
+          const SizedBox(height: 22),
+          const Wrap(
+            spacing: 10,
+            runSpacing: 10,
+            children: [
+              _HeroPill(label: 'Live sliders'),
+              _HeroPill(label: 'Phase-change model'),
+              _HeroPill(label: 'Responsive layout'),
+            ],
+          ),
+        ],
       ],
     );
   }
@@ -429,95 +504,6 @@ class _HeroPill extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         child: Text(label, style: Theme.of(context).textTheme.labelLarge),
       ),
-    );
-  }
-}
-
-class _InsightPanel extends StatelessWidget {
-  const _InsightPanel({required this.controller});
-
-  final ThawController controller;
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(22),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Why the curve slows',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'The thaw line flattens around 32°F because a portion of incoming energy is redirected into phase change rather than temperature rise.',
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-            const SizedBox(height: 18),
-            const _InsightRow(
-              color: AppTheme.frozenBlue,
-              title: 'Frozen region',
-              subtitle: 'Standard warming from the initial core temperature.',
-            ),
-            const SizedBox(height: 14),
-            _InsightRow(
-              color: AppTheme.safeGreen,
-              title: 'Phase plateau',
-              subtitle:
-                  '${controller.plateauDurationHours.toStringAsFixed(1)} hours of slowed warming near the thaw boundary.',
-            ),
-            const SizedBox(height: 14),
-            const _InsightRow(
-              color: AppTheme.dangerRed,
-              title: 'Safety target',
-              subtitle: '41°F is the threshold shown in the analysis card and chart.',
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _InsightRow extends StatelessWidget {
-  const _InsightRow({
-    required this.color,
-    required this.title,
-    required this.subtitle,
-  });
-
-  final Color color;
-  final String title;
-  final String subtitle;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          width: 10,
-          height: 10,
-          margin: const EdgeInsets.only(top: 6),
-          decoration: BoxDecoration(
-            color: color,
-            borderRadius: BorderRadius.circular(999),
-          ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(title, style: Theme.of(context).textTheme.labelLarge),
-              const SizedBox(height: 4),
-              Text(subtitle, style: Theme.of(context).textTheme.bodyMedium),
-            ],
-          ),
-        ),
-      ],
     );
   }
 }

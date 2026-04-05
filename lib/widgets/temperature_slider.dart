@@ -12,6 +12,7 @@ class TemperatureSlider extends StatelessWidget {
     required this.max,
     required this.activeColor,
     required this.onChanged,
+    this.compact = false,
   });
 
   final String label;
@@ -21,6 +22,7 @@ class TemperatureSlider extends StatelessWidget {
   final double max;
   final Color activeColor;
   final ValueChanged<double> onChanged;
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
@@ -34,14 +36,19 @@ class TemperatureSlider extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(label, style: Theme.of(context).textTheme.labelLarge),
-                  const SizedBox(height: 2),
-                  Text(helper, style: Theme.of(context).textTheme.bodyMedium),
+                  if (!compact) ...[
+                    const SizedBox(height: 2),
+                    Text(helper, style: Theme.of(context).textTheme.bodyMedium),
+                  ],
                 ],
               ),
             ),
             AnimatedContainer(
               duration: const Duration(milliseconds: 220),
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              padding: EdgeInsets.symmetric(
+                horizontal: compact ? 8 : 10,
+                vertical: compact ? 5 : 6,
+              ),
               decoration: BoxDecoration(
                 color: activeColor.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(999),
@@ -55,12 +62,13 @@ class TemperatureSlider extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: 10),
+        SizedBox(height: compact ? 4 : 10),
         SliderTheme(
           data: SliderTheme.of(context).copyWith(
             activeTrackColor: activeColor,
             thumbColor: activeColor,
             overlayColor: activeColor.withValues(alpha: 0.14),
+            trackHeight: compact ? 3 : null,
             inactiveTrackColor: activeColor.withValues(alpha: 0.15),
           ),
           child: Slider(
@@ -75,10 +83,10 @@ class TemperatureSlider extends StatelessWidget {
         Row(
           children: [
             Text(formatTemperature(min),
-                style: Theme.of(context).textTheme.bodyMedium),
+                style: Theme.of(context).textTheme.bodySmall),
             const Spacer(),
             Text(formatTemperature(max),
-                style: Theme.of(context).textTheme.bodyMedium),
+                style: Theme.of(context).textTheme.bodySmall),
           ],
         ),
       ],

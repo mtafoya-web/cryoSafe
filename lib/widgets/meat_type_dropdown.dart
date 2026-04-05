@@ -7,10 +7,12 @@ class MeatTypeDropdown extends StatelessWidget {
     super.key,
     required this.value,
     required this.onChanged,
+    this.compact = false,
   });
 
   final MeatType value;
   final ValueChanged<MeatType> onChanged;
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
@@ -18,12 +20,14 @@ class MeatTypeDropdown extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text('Meat Type', style: Theme.of(context).textTheme.labelLarge),
-        const SizedBox(height: 2),
-        Text(
-          'Protein density changes how quickly heat penetrates the cut.',
-          style: Theme.of(context).textTheme.bodyMedium,
-        ),
-        const SizedBox(height: 10),
+        if (!compact) ...[
+          const SizedBox(height: 2),
+          Text(
+            'Protein density changes how quickly heat penetrates the cut.',
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+        ],
+        SizedBox(height: compact ? 6 : 10),
         SegmentedButton<MeatType>(
           showSelectedIcon: false,
           multiSelectionEnabled: false,

@@ -14,6 +14,7 @@ class ResultCard extends StatelessWidget {
     required this.initialTempF,
     required this.thicknessInches,
     required this.summary,
+    this.compact = false,
   });
 
   final ThawResult result;
@@ -22,6 +23,7 @@ class ResultCard extends StatelessWidget {
   final double initialTempF;
   final double thicknessInches;
   final String summary;
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +51,7 @@ class ResultCard extends StatelessWidget {
           ],
         ),
         child: Padding(
-          padding: const EdgeInsets.all(24),
+          padding: EdgeInsets.all(compact ? 20 : 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -58,7 +60,7 @@ class ResultCard extends StatelessWidget {
                 children: [
                   Container(
                     width: 12,
-                    height: 96,
+                    height: compact ? 78 : 96,
                     decoration: BoxDecoration(
                       color: accent,
                       borderRadius: BorderRadius.circular(999),
@@ -73,7 +75,7 @@ class ResultCard extends StatelessWidget {
                           'Estimated Time To 41°F',
                           style: Theme.of(context).textTheme.titleMedium,
                         ),
-                        const SizedBox(height: 8),
+                        SizedBox(height: compact ? 6 : 8),
                         AnimatedSwitcher(
                           duration: const Duration(milliseconds: 260),
                           switchInCurve: Curves.easeOutCubic,
@@ -87,10 +89,11 @@ class ResultCard extends StatelessWidget {
                                 Theme.of(context).textTheme.headlineLarge?.copyWith(
                                       color: AppTheme.inkColor,
                                       height: 1,
+                                      fontSize: compact ? 44 : null,
                                     ),
                           ),
                         ),
-                        const SizedBox(height: 8),
+                        SizedBox(height: compact ? 6 : 8),
                         Text(
                           summary,
                           style: Theme.of(context).textTheme.bodyMedium,
@@ -100,10 +103,10 @@ class ResultCard extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 18),
+              SizedBox(height: compact ? 14 : 18),
               Wrap(
-                spacing: 10,
-                runSpacing: 10,
+                spacing: compact ? 8 : 10,
+                runSpacing: compact ? 8 : 10,
                 children: [
                   _MetricPill(label: 'Protein', value: meatType.label),
                   _MetricPill(

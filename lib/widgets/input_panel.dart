@@ -10,9 +10,11 @@ class InputPanel extends StatelessWidget {
   const InputPanel({
     super.key,
     required this.controller,
+    this.compact = false,
   });
 
   final ThawController controller;
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +39,7 @@ class InputPanel extends StatelessWidget {
         ],
       ),
       child: Padding(
-        padding: const EdgeInsets.all(24),
+        padding: EdgeInsets.all(compact ? 20 : 24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -45,18 +47,22 @@ class InputPanel extends StatelessWidget {
               'Simulation Inputs',
               style: Theme.of(context).textTheme.titleLarge,
             ),
-            const SizedBox(height: 6),
-            Text(
-              'Adjust the refrigerator environment and meat geometry to estimate a safe thaw curve in real time.',
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-            const SizedBox(height: 16),
-            const _InfoCallout(
-              icon: Icons.thermostat_rounded,
-              title: 'Safety target',
-              body: 'The dashboard estimates when the center of the cut reaches 41°F under refrigerator conditions.',
-            ),
-            const SizedBox(height: 16),
+            if (!compact) ...[
+              const SizedBox(height: 6),
+              Text(
+                'Adjust the refrigerator environment and meat geometry to estimate a safe thaw curve in real time.',
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+              const SizedBox(height: 16),
+              const _InfoCallout(
+                icon: Icons.thermostat_rounded,
+                title: 'Safety target',
+                body:
+                    'The dashboard estimates when the center of the cut reaches 41°F under refrigerator conditions.',
+              ),
+              const SizedBox(height: 16),
+            ] else
+              const SizedBox(height: 12),
             TemperatureSlider(
               label: 'Fridge Temperature',
               helper: 'Typical safe refrigerator range',
@@ -65,8 +71,9 @@ class InputPanel extends StatelessWidget {
               max: 45,
               activeColor: AppTheme.frozenBlue,
               onChanged: controller.updateAmbientFridgeTemp,
+              compact: compact,
             ),
-            const SizedBox(height: 18),
+            SizedBox(height: compact ? 12 : 18),
             TemperatureSlider(
               label: 'Initial Meat Temperature',
               helper: 'Starting core temperature',
@@ -75,28 +82,33 @@ class InputPanel extends StatelessWidget {
               max: 32,
               activeColor: AppTheme.dangerRed,
               onChanged: controller.updateInitialMeatTemp,
+              compact: compact,
             ),
-            const SizedBox(height: 18),
+            SizedBox(height: compact ? 12 : 18),
             ThicknessSlider(
               value: controller.thicknessInches,
               activeColor: AppTheme.safeGreen,
               onChanged: controller.updateThickness,
+              compact: compact,
             ),
-            const SizedBox(height: 18),
+            SizedBox(height: compact ? 12 : 18),
             MeatTypeDropdown(
               value: controller.meatType,
               onChanged: controller.updateMeatType,
+              compact: compact,
             ),
-            const SizedBox(height: 22),
-            const Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                _FactChip(label: 'Newton cooling'),
-                _FactChip(label: 'Phase change near 32°F'),
-                _FactChip(label: 'Real-time updates'),
-              ],
-            ),
+            if (!compact) ...[
+              const SizedBox(height: 22),
+              const Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  _FactChip(label: 'Newton cooling'),
+                  _FactChip(label: 'Phase change near 32°F'),
+                  _FactChip(label: 'Real-time updates'),
+                ],
+              ),
+            ],
           ],
         ),
       ),
