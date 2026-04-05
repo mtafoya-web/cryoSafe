@@ -246,106 +246,209 @@ class _ThermoNotes extends StatelessWidget {
             style: Theme.of(context).textTheme.bodySmall,
           ),
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SelectionArea(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'CryoSafe uses a staged approximation of Newton’s Law of Cooling: dT/dt = k (T_fridge - T_core). The slope is reduced near the freezing boundary to mimic latent heat during phase change, and thickness plus meat type adjust the effective warming coefficient.',
-                        style: Theme.of(context).textTheme.bodyMedium,
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final wide = constraints.maxWidth >= 1080;
+                final mediaCardWidth = wide
+                    ? (constraints.maxWidth - 16) / 2
+                    : constraints.maxWidth;
+
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SelectionArea(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'CryoSafe uses a staged approximation of Newton’s Law of Cooling: dT/dt = k (T_fridge - T_core). The slope is reduced near the freezing boundary to mimic latent heat during phase change, and thickness plus meat type adjust the effective warming coefficient.',
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            'How to measure thickness',
+                            style: Theme.of(context).textTheme.labelLarge,
+                          ),
+                          const SizedBox(height: 6),
+                          const _NoteBullet(
+                            text:
+                                'Lay the cut flat and measure from the top surface to the bottom surface at the thickest point.',
+                          ),
+                          const _NoteBullet(
+                            text:
+                                'For tapered cuts like chicken breasts or fish fillets, ignore the thin tail and use the thick center section.',
+                          ),
+                          const _NoteBullet(
+                            text:
+                                'If the cut is uneven, enter the maximum thickness because the coldest, thickest section controls thaw time.',
+                          ),
+                          const _NoteBullet(
+                            text:
+                                'If several pieces are stacked or touching, measure the thickest individual piece rather than the whole pile.',
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            'How to measure meat temperature',
+                            style: Theme.of(context).textTheme.labelLarge,
+                          ),
+                          const SizedBox(height: 6),
+                          const _NoteBullet(
+                            text:
+                                'Use an instant-read food thermometer and insert the probe into the center of the thickest section.',
+                          ),
+                          const _NoteBullet(
+                            text:
+                                'Avoid bone, large fat pockets, or the tray surface because they can give misleading readings.',
+                          ),
+                          const _NoteBullet(
+                            text:
+                                'For thin cuts, insert the probe from the side so the sensing tip lands in the middle instead of poking through.',
+                          ),
+                          const _NoteBullet(
+                            text:
+                                'If the cut is large or irregular, take two readings in different spots and use the colder one.',
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 12),
-                      Text(
-                        'How to measure thickness',
-                        style: Theme.of(context).textTheme.labelLarge,
-                      ),
-                      const SizedBox(height: 6),
-                      const _NoteBullet(
-                        text:
-                            'Lay the cut flat and measure from the top surface to the bottom surface at the thickest point.',
-                      ),
-                      const _NoteBullet(
-                        text:
-                            'For tapered cuts like chicken breasts or fish fillets, ignore the thin tail and use the thick center section.',
-                      ),
-                      const _NoteBullet(
-                        text:
-                            'If the cut is uneven, enter the maximum thickness because the coldest, thickest section controls thaw time.',
-                      ),
-                      const _NoteBullet(
-                        text:
-                            'If several pieces are stacked or touching, measure the thickest individual piece rather than the whole pile.',
-                      ),
-                      const SizedBox(height: 12),
-                      Text(
-                        'How to measure meat temperature',
-                        style: Theme.of(context).textTheme.labelLarge,
-                      ),
-                      const SizedBox(height: 6),
-                      const _NoteBullet(
-                        text:
-                            'Use an instant-read food thermometer and insert the probe into the center of the thickest section.',
-                      ),
-                      const _NoteBullet(
-                        text:
-                            'Avoid bone, large fat pockets, or the tray surface because they can give misleading readings.',
-                      ),
-                      const _NoteBullet(
-                        text:
-                            'For thin cuts, insert the probe from the side so the sensing tip lands in the middle instead of poking through.',
-                      ),
-                      const _NoteBullet(
-                        text:
-                            'If the cut is large or irregular, take two readings in different spots and use the colder one.',
-                      ),
-                      const SizedBox(height: 12),
-                      Text(
-                        'Suggested videos and guides',
-                        style: Theme.of(context).textTheme.labelLarge,
-                      ),
-                      const SizedBox(height: 8),
-                      const _ResourceTile(
-                        title: 'CDC video: Always Use a Food Thermometer',
-                        description:
-                            'Short official walkthrough on when to check temperature and why thermometer use matters for food safety.',
-                        url:
-                            'https://www.cdc.gov/food-safety/communication-resources/always-use-a-food-thermometer.html',
-                      ),
-                      const SizedBox(height: 8),
-                      const _ResourceTile(
-                        title: 'USDA guide: Food Thermometers',
-                        description:
-                            'Official placement guidance for meat, poultry, fish, and thin cuts, including side insertion for thin foods.',
-                        url:
-                            'https://www.fsis.usda.gov/food-safety/safe-food-handling-and-preparation/food-safety-basics/food-thermometers',
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 12),
-                const VideoEmbed(
-                  title: 'How to Properly Use a Meat Thermometer',
-                  description:
-                      'Practical probe-placement demo for burgers, chops, chicken breast, and roasts.',
-                  videoId: 'YRQ47Ieddkk',
-                  watchUrl: 'https://www.youtube.com/watch?v=YRQ47Ieddkk',
-                ),
-                const SizedBox(height: 12),
-                const VideoEmbed(
-                  title: 'How to Use a Meat Thermometer',
-                  description:
-                      'General kitchen walkthrough covering instant-read use and center-point placement.',
-                  videoId: 'rtDp1nyXquY',
-                  watchUrl: 'https://www.youtube.com/watch?v=rtDp1nyXquY',
-                ),
-              ],
+                    ),
+                    const SizedBox(height: 16),
+                    const _SectionHeader(
+                      title: 'Video walkthroughs',
+                      subtitle:
+                          'Playable right on the site for quick thermometer and placement demos.',
+                      icon: Icons.ondemand_video_rounded,
+                    ),
+                    const SizedBox(height: 10),
+                    Wrap(
+                      spacing: 16,
+                      runSpacing: 16,
+                      children: [
+                        SizedBox(
+                          width: mediaCardWidth,
+                          child: const VideoEmbed(
+                            title: 'How to Properly Use a Meat Thermometer',
+                            description:
+                                'Probe-placement demo for burgers, chops, chicken breast, and roasts.',
+                            videoId: 'YRQ47Ieddkk',
+                            watchUrl: 'https://www.youtube.com/watch?v=YRQ47Ieddkk',
+                          ),
+                        ),
+                        SizedBox(
+                          width: mediaCardWidth,
+                          child: const VideoEmbed(
+                            title: 'How to Use a Meat Thermometer',
+                            description:
+                                'General kitchen walkthrough covering instant-read use and center-point placement.',
+                            videoId: 'rtDp1nyXquY',
+                            watchUrl: 'https://www.youtube.com/watch?v=rtDp1nyXquY',
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    const _SectionHeader(
+                      title: 'Quick reference guides',
+                      subtitle:
+                          'Trusted food-safety sources for placement, safe temperature checks, and handling basics.',
+                      icon: Icons.link_rounded,
+                    ),
+                    const SizedBox(height: 10),
+                    Wrap(
+                      spacing: 12,
+                      runSpacing: 12,
+                      children: [
+                        SizedBox(
+                          width: wide
+                              ? (constraints.maxWidth - 24) / 3
+                              : constraints.maxWidth,
+                          child: const _ResourceTile(
+                            title: 'CDC thermometer guidance',
+                            description:
+                                'Short official explainer on why food thermometers matter and when to use them.',
+                            url:
+                                'https://www.cdc.gov/food-safety/communication-resources/always-use-a-food-thermometer.html',
+                          ),
+                        ),
+                        SizedBox(
+                          width: wide
+                              ? (constraints.maxWidth - 24) / 3
+                              : constraints.maxWidth,
+                          child: const _ResourceTile(
+                            title: 'USDA food thermometer guide',
+                            description:
+                                'Official placement guidance for meat, poultry, fish, and thin cuts.',
+                            url:
+                                'https://www.fsis.usda.gov/food-safety/safe-food-handling-and-preparation/food-safety-basics/food-thermometers',
+                          ),
+                        ),
+                        SizedBox(
+                          width: wide
+                              ? (constraints.maxWidth - 24) / 3
+                              : constraints.maxWidth,
+                          child: const _ResourceTile(
+                            title: 'USDA safe thawing basics',
+                            description:
+                                'Best-practice thawing rules to pair with the simulation when planning refrigerator defrosting.',
+                            url:
+                                'https://www.fsis.usda.gov/food-safety/safe-food-handling-and-preparation/food-safety-basics/big-thaw-safe-defrosting-methods',
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                );
+              },
             ),
           ],
         ),
       ),
+    );
+  }
+}
+
+class _SectionHeader extends StatelessWidget {
+  const _SectionHeader({
+    required this.title,
+    required this.subtitle,
+    required this.icon,
+  });
+
+  final String title;
+  final String subtitle;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: 36,
+          height: 36,
+          decoration: BoxDecoration(
+            color: AppTheme.chartBlueTint,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Icon(icon, size: 18, color: AppTheme.frozenBlue),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: Theme.of(context).textTheme.labelLarge,
+              ),
+              const SizedBox(height: 2),
+              Text(
+                subtitle,
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
@@ -401,18 +504,45 @@ class _ResourceTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: AppTheme.panelColor,
-        borderRadius: BorderRadius.circular(16),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
         border: Border.all(color: AppTheme.borderColor),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.softShadow.withValues(alpha: 0.28),
+            blurRadius: 18,
+            offset: const Offset(0, 8),
+          ),
+        ],
       ),
       child: Padding(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(14),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              title,
-              style: Theme.of(context).textTheme.labelLarge,
+            Row(
+              children: [
+                Container(
+                  width: 30,
+                  height: 30,
+                  decoration: BoxDecoration(
+                    color: AppTheme.chartGreenTint,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Icon(
+                    Icons.open_in_new_rounded,
+                    size: 16,
+                    color: AppTheme.safeGreen,
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    title,
+                    style: Theme.of(context).textTheme.labelLarge,
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 4),
             Text(
@@ -420,11 +550,20 @@ class _ResourceTile extends StatelessWidget {
               style: Theme.of(context).textTheme.bodySmall,
             ),
             const SizedBox(height: 8),
-            Text(
-              url,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: AppTheme.electricBlue,
-                  ),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+              decoration: BoxDecoration(
+                color: AppTheme.panelColor,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: AppTheme.borderColor),
+              ),
+              child: Text(
+                url,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: AppTheme.electricBlue,
+                    ),
+              ),
             ),
           ],
         ),
