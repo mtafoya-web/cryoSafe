@@ -54,7 +54,7 @@ class ResultCard extends StatelessWidget {
           ],
         ),
         child: Padding(
-          padding: EdgeInsets.all(compact ? 20 : 24),
+          padding: EdgeInsets.all(compact ? 16 : 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -63,7 +63,7 @@ class ResultCard extends StatelessWidget {
                 children: [
                   Container(
                     width: 12,
-                    height: compact ? 78 : 96,
+                    height: compact ? 64 : 96,
                     decoration: BoxDecoration(
                       color: accent,
                       borderRadius: BorderRadius.circular(999),
@@ -92,13 +92,16 @@ class ResultCard extends StatelessWidget {
                                 Theme.of(context).textTheme.headlineLarge?.copyWith(
                                       color: AppTheme.inkColor,
                                       height: 1,
-                                      fontSize: compact ? 44 : null,
+                                      fontSize: compact ? 38 : null,
                                     ),
                           ),
                         ),
                         SizedBox(height: compact ? 6 : 8),
                         Text(
                           summary,
+                          maxLines: compact ? 2 : null,
+                          overflow:
+                              compact ? TextOverflow.ellipsis : TextOverflow.visible,
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                       ],
@@ -106,7 +109,7 @@ class ResultCard extends StatelessWidget {
                   ),
                 ],
               ),
-              SizedBox(height: compact ? 14 : 18),
+              SizedBox(height: compact ? 10 : 18),
               Wrap(
                 spacing: compact ? 8 : 10,
                 runSpacing: compact ? 8 : 10,
@@ -126,6 +129,11 @@ class ResultCard extends StatelessWidget {
                       unit: temperatureUnit,
                     ),
                   ),
+                  if (compact)
+                    _MetricPill(
+                      label: 'Thickness',
+                      value: '${formatShortNumber(thicknessInches)} in',
+                    ),
                   if (!compact)
                     _MetricPill(
                       label: 'Thickness',

@@ -42,7 +42,7 @@ class MainScreen extends StatelessWidget {
                       Expanded(
                         child: _AnalysisWorkspace(controller: controller),
                       ),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 8),
                       _ThermoNotes(controller: controller),
                     ],
                   ),
@@ -268,19 +268,25 @@ class _ThermoNotes extends StatelessWidget {
       data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
       child: Card(
         child: ExpansionTile(
-          tilePadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 4),
-          childrenPadding: const EdgeInsets.fromLTRB(18, 0, 18, 18),
+          initiallyExpanded: false,
+          maintainState: false,
+          dense: true,
+          visualDensity: const VisualDensity(vertical: -2),
+          tilePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+          childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 14),
           title: Text(
-            'Thermodynamics and calculation notes',
+            'Thermodynamics notes',
             style: Theme.of(context).textTheme.titleMedium,
           ),
           subtitle: Text(
             'Newton cooling with a thaw plateau near 32°F/0°C.',
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
             style: Theme.of(context).textTheme.bodySmall,
           ),
           children: [
             Text(
-              'CryoSafe uses a staged approximation of Newton’s Law of Cooling. The core rate model is dT/dt = k (T_fridge - T_core), then the slope is intentionally reduced near the freezing boundary to mimic latent heat during phase change. Thickness and meat type modify the effective warming coefficient, and the reported thaw time is the simulated time required for the core to reach the safe-thaw threshold.',
+              'CryoSafe uses a staged approximation of Newton’s Law of Cooling: dT/dt = k (T_fridge - T_core). The slope is reduced near the freezing boundary to mimic latent heat during phase change, and thickness plus meat type adjust the effective warming coefficient.',
               style: Theme.of(context).textTheme.bodyMedium,
             ),
           ],
