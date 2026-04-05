@@ -2,11 +2,10 @@
     "name": "CryoSafe",
     "short_name": "CryoSafe",
     "start_url": ".",
-    "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
-    "orientation": "portrait-primary",
+    "display": "browser",
+    "background_color": "#F4F7FB",
+    "theme_color": "#F4F7FB",
+    "description": "CryoSafe is a thermodynamics-inspired thaw planning dashboard for safe refrigerator thaw estimates.",
     "prefer_related_applications": false,
     "icons": [
         {
