@@ -34,33 +34,42 @@ class MainScreen extends StatelessWidget {
               builder: (context, constraints) {
                 final isWide = constraints.maxWidth >= 1080;
                 final useViewportMobile = !isWide && constraints.maxHeight >= 760;
+                final useCompactDesktop =
+                    constraints.maxWidth < 1320 || constraints.maxHeight < 860;
+                final desktopRailWidth = useCompactDesktop ? 340.0 : 388.0;
 
                 return Center(
                   child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 1320),
+                    constraints: const BoxConstraints(maxWidth: 1440),
                     child: isWide
                         ? Padding(
-                            padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
+                            padding: const EdgeInsets.fromLTRB(24, 14, 24, 22),
                             child: Column(
                               children: [
                                 _DashboardHero(
                                   controller: controller,
-                                  compact: true,
+                                  compact: useCompactDesktop,
                                 ),
-                                const SizedBox(height: 18),
+                                SizedBox(height: useCompactDesktop ? 18 : 22),
                                 Expanded(
                                   child: Row(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.stretch,
                                     children: [
                                       SizedBox(
-                                        width: 340,
-                                        child: InputPanel(
-                                          controller: controller,
-                                          compact: true,
+                                        width: desktopRailWidth,
+                                        child: SingleChildScrollView(
+                                          physics:
+                                              const BouncingScrollPhysics(),
+                                          child: InputPanel(
+                                            controller: controller,
+                                            compact: useCompactDesktop,
+                                          ),
                                         ),
                                       ),
-                                      const SizedBox(width: 20),
+                                      SizedBox(
+                                        width: useCompactDesktop ? 20 : 28,
+                                      ),
                                       Expanded(
                                         child: Column(
                                           children: [
@@ -75,13 +84,16 @@ class MainScreen extends StatelessWidget {
                                                   controller.thicknessInches,
                                               summary:
                                                   controller.safetySummary,
-                                              compact: true,
+                                              compact: useCompactDesktop,
                                             ),
-                                            const SizedBox(height: 16),
+                                            SizedBox(
+                                              height:
+                                                  useCompactDesktop ? 16 : 20,
+                                            ),
                                             Expanded(
                                               child: TemperatureChart(
                                                 points: controller.points,
-                                                compact: true,
+                                                compact: useCompactDesktop,
                                               ),
                                             ),
                                           ],
