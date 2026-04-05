@@ -6,6 +6,8 @@ import '../theme/app_theme.dart';
 import '../widgets/input_panel.dart';
 import '../widgets/result_card.dart';
 import '../widgets/temperature_chart.dart';
+import '../widgets/video_embed_stub.dart'
+    if (dart.library.html) '../widgets/video_embed_web.dart';
 
 class MainScreen extends StatelessWidget {
   const MainScreen({super.key});
@@ -244,88 +246,102 @@ class _ThermoNotes extends StatelessWidget {
             style: Theme.of(context).textTheme.bodySmall,
           ),
           children: [
-            SelectionArea(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'CryoSafe uses a staged approximation of Newton’s Law of Cooling: dT/dt = k (T_fridge - T_core). The slope is reduced near the freezing boundary to mimic latent heat during phase change, and thickness plus meat type adjust the effective warming coefficient.',
-                    style: Theme.of(context).textTheme.bodyMedium,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SelectionArea(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'CryoSafe uses a staged approximation of Newton’s Law of Cooling: dT/dt = k (T_fridge - T_core). The slope is reduced near the freezing boundary to mimic latent heat during phase change, and thickness plus meat type adjust the effective warming coefficient.',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        'How to measure thickness',
+                        style: Theme.of(context).textTheme.labelLarge,
+                      ),
+                      const SizedBox(height: 6),
+                      const _NoteBullet(
+                        text:
+                            'Lay the cut flat and measure from the top surface to the bottom surface at the thickest point.',
+                      ),
+                      const _NoteBullet(
+                        text:
+                            'For tapered cuts like chicken breasts or fish fillets, ignore the thin tail and use the thick center section.',
+                      ),
+                      const _NoteBullet(
+                        text:
+                            'If the cut is uneven, enter the maximum thickness because the coldest, thickest section controls thaw time.',
+                      ),
+                      const _NoteBullet(
+                        text:
+                            'If several pieces are stacked or touching, measure the thickest individual piece rather than the whole pile.',
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        'How to measure meat temperature',
+                        style: Theme.of(context).textTheme.labelLarge,
+                      ),
+                      const SizedBox(height: 6),
+                      const _NoteBullet(
+                        text:
+                            'Use an instant-read food thermometer and insert the probe into the center of the thickest section.',
+                      ),
+                      const _NoteBullet(
+                        text:
+                            'Avoid bone, large fat pockets, or the tray surface because they can give misleading readings.',
+                      ),
+                      const _NoteBullet(
+                        text:
+                            'For thin cuts, insert the probe from the side so the sensing tip lands in the middle instead of poking through.',
+                      ),
+                      const _NoteBullet(
+                        text:
+                            'If the cut is large or irregular, take two readings in different spots and use the colder one.',
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        'Suggested videos and guides',
+                        style: Theme.of(context).textTheme.labelLarge,
+                      ),
+                      const SizedBox(height: 8),
+                      const _ResourceTile(
+                        title: 'CDC video: Always Use a Food Thermometer',
+                        description:
+                            'Short official walkthrough on when to check temperature and why thermometer use matters for food safety.',
+                        url:
+                            'https://www.cdc.gov/food-safety/communication-resources/always-use-a-food-thermometer.html',
+                      ),
+                      const SizedBox(height: 8),
+                      const _ResourceTile(
+                        title: 'USDA guide: Food Thermometers',
+                        description:
+                            'Official placement guidance for meat, poultry, fish, and thin cuts, including side insertion for thin foods.',
+                        url:
+                            'https://www.fsis.usda.gov/food-safety/safe-food-handling-and-preparation/food-safety-basics/food-thermometers',
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 12),
-                  Text(
-                    'How to measure thickness',
-                    style: Theme.of(context).textTheme.labelLarge,
-                  ),
-                  const SizedBox(height: 6),
-                  const _NoteBullet(
-                    text:
-                        'Lay the cut flat and measure from the top surface to the bottom surface at the thickest point.',
-                  ),
-                  const _NoteBullet(
-                    text:
-                        'For tapered cuts like chicken breasts or fish fillets, ignore the thin tail and use the thick center section.',
-                  ),
-                  const _NoteBullet(
-                    text:
-                        'If the cut is uneven, enter the maximum thickness because the coldest, thickest section controls thaw time.',
-                  ),
-                  const _NoteBullet(
-                    text:
-                        'If several pieces are stacked or touching, measure the thickest individual piece rather than the whole pile.',
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    'How to measure meat temperature',
-                    style: Theme.of(context).textTheme.labelLarge,
-                  ),
-                  const SizedBox(height: 6),
-                  const _NoteBullet(
-                    text:
-                        'Use an instant-read food thermometer and insert the probe into the center of the thickest section.',
-                  ),
-                  const _NoteBullet(
-                    text:
-                        'Avoid bone, large fat pockets, or the tray surface because they can give misleading readings.',
-                  ),
-                  const _NoteBullet(
-                    text:
-                        'For thin cuts, insert the probe from the side so the sensing tip lands in the middle instead of poking through.',
-                  ),
-                  const _NoteBullet(
-                    text:
-                        'If the cut is large or irregular, take two readings in different spots and use the colder one.',
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    'Suggested videos and guides',
-                    style: Theme.of(context).textTheme.labelLarge,
-                  ),
-                  const SizedBox(height: 8),
-                  const _ResourceTile(
-                    title: 'CDC video: Always Use a Food Thermometer',
-                    description:
-                        'Short official walkthrough on when to check temperature and why thermometer use matters for food safety.',
-                    url:
-                        'https://www.cdc.gov/food-safety/communication-resources/always-use-a-food-thermometer.html',
-                  ),
-                  const SizedBox(height: 8),
-                  const _ResourceTile(
-                    title: 'USDA guide: Food Thermometers',
-                    description:
-                        'Official placement guidance for meat, poultry, fish, and thin cuts, including side insertion for thin foods.',
-                    url:
-                        'https://www.fsis.usda.gov/food-safety/safe-food-handling-and-preparation/food-safety-basics/food-thermometers',
-                  ),
-                  const SizedBox(height: 8),
-                  const _ResourceTile(
-                    title: 'Meat Institute video: How to Properly Use a Meat Thermometer',
-                    description:
-                        'Practical video demonstration showing correct probe placement for burgers, chops, chicken breast, and roasts.',
-                    url: 'https://www.youtube.com/watch?v=YRQ47Ieddkk',
-                  ),
-                ],
-              ),
+                ),
+                const SizedBox(height: 12),
+                const VideoEmbed(
+                  title: 'How to Properly Use a Meat Thermometer',
+                  description:
+                      'Practical probe-placement demo for burgers, chops, chicken breast, and roasts.',
+                  videoId: 'YRQ47Ieddkk',
+                  watchUrl: 'https://www.youtube.com/watch?v=YRQ47Ieddkk',
+                ),
+                const SizedBox(height: 12),
+                const VideoEmbed(
+                  title: 'How to Use a Meat Thermometer',
+                  description:
+                      'General kitchen walkthrough covering instant-read use and center-point placement.',
+                  videoId: 'rtDp1nyXquY',
+                  watchUrl: 'https://www.youtube.com/watch?v=rtDp1nyXquY',
+                ),
+              ],
             ),
           ],
         ),
