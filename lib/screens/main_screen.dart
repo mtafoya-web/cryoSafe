@@ -33,19 +33,18 @@ class MainScreen extends StatelessWidget {
             child: Center(
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 1360),
-                child: Padding(
+                child: ListView(
                   padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
-                  child: Column(
-                    children: [
-                      _HeaderBar(controller: controller),
-                      const SizedBox(height: 12),
-                      Expanded(
-                        child: _AnalysisWorkspace(controller: controller),
-                      ),
-                      const SizedBox(height: 8),
-                      _ThermoNotes(controller: controller),
-                    ],
+                  physics: const AlwaysScrollableScrollPhysics(
+                    parent: BouncingScrollPhysics(),
                   ),
+                  children: [
+                    _HeaderBar(controller: controller),
+                    const SizedBox(height: 12),
+                    _AnalysisWorkspace(controller: controller),
+                    const SizedBox(height: 8),
+                    _ThermoNotes(controller: controller),
+                  ],
                 ),
               ),
             ),
@@ -146,113 +145,73 @@ class _AnalysisWorkspace extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.92),
-        borderRadius: BorderRadius.circular(28),
-        border: Border.all(color: Colors.white),
-        boxShadow: [
-          BoxShadow(
-            color: AppTheme.softShadow.withValues(alpha: 0.75),
-            blurRadius: 28,
-            offset: const Offset(0, 16),
-          ),
-        ],
-      ),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          return Padding(
-            padding: const EdgeInsets.all(14),
-            child: Column(
-              children: [
-                ResultCard(
-                  result: controller.result,
-                  meatType: controller.meatType,
-                  fridgeTempF: controller.ambientFridgeTempF,
-                  initialTempF: controller.initialMeatTempF,
-                  thicknessInches: controller.thicknessInches,
-                  summary: controller.safetySummary,
-                  temperatureUnit: controller.temperatureUnit,
-                  compact: true,
-                ),
-                const SizedBox(height: 12),
-                Expanded(
-                  child: LayoutBuilder(
-                    builder: (context, workspaceConstraints) {
-                      final sideBySide = workspaceConstraints.maxWidth >= 760;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final sideBySide = constraints.maxWidth >= 900;
+        final railWidth = constraints.maxWidth >= 1180 ? 360.0 : 320.0;
 
-                      if (sideBySide) {
-                        final railWidth =
-                            workspaceConstraints.maxWidth >= 1180 ? 360.0 : 320.0;
-
-                        return Row(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            SizedBox(
-                              width: railWidth,
-                              child: SingleChildScrollView(
-                                physics: const BouncingScrollPhysics(),
-                                child: InputPanel(
-                                  controller: controller,
-                                  compact: true,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 14),
-                            Expanded(
-                              child: TemperatureChart(
-                                points: controller.displayPoints,
-                                unit: controller.temperatureUnit,
-                                frozenThreshold:
-                                    controller.frozenThresholdDisplay,
-                                safeThreshold:
-                                    controller.safeThresholdDisplay,
-                                compact: true,
-                              ),
-                            ),
-                          ],
-                        );
-                      }
-
-                      return Column(
-                        children: [
-                          Expanded(
-                            flex: 9,
-                            child: SizedBox.expand(
-                              child: SingleChildScrollView(
-                                physics: const BouncingScrollPhysics(),
-                                child: InputPanel(
-                                  controller: controller,
-                                  compact: true,
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 12),
-                          Expanded(
-                            flex: 10,
-                            child: SizedBox.expand(
-                              child: TemperatureChart(
-                                points: controller.displayPoints,
-                                unit: controller.temperatureUnit,
-                                frozenThreshold:
-                                    controller.frozenThresholdDisplay,
-                                safeThreshold:
-                                    controller.safeThresholdDisplay,
-                                compact: true,
-                              ),
-                            ),
-                          ),
-                        ],
-                      );
-                    },
-                  ),
-                ),
-              ],
+        return Column(
+          children: [
+            ResultCard(
+              result: controller.result,
+              meatType: controller.meatType,
+              fridgeTempF: controller.ambientFridgeTempF,
+              initialTempF: controller.initialMeatTempF,
+              thicknessInches: controller.thicknessInches,
+              summary: controller.safetySummary,
+              temperatureUnit: controller.temperatureUnit,
+              compact: true,
             ),
-          );
-        },
-      ),
+            const SizedBox(height: 12),
+            if (sideBySide)
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    width: railWidth,
+                    child: InputPanel(
+                      controller: controller,
+                      compact: true,
+                    ),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: SizedBox(
+                      height: 560,
+                      child: TemperatureChart(
+                        points: controller.displayPoints,
+                        unit: controller.temperatureUnit,
+                        frozenThreshold: controller.frozenThresholdDisplay,
+                        safeThreshold: controller.safeThresholdDisplay,
+                        compact: true,
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            else
+              Column(
+                children: [
+                  InputPanel(
+                    controller: controller,
+                    compact: true,
+                  ),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    height: 360,
+                    child: TemperatureChart(
+                      points: controller.displayPoints,
+                      unit: controller.temperatureUnit,
+                      frozenThreshold: controller.frozenThresholdDisplay,
+                      safeThreshold: controller.safeThresholdDisplay,
+                      compact: true,
+                    ),
+                  ),
+                ],
+              ),
+          ],
+        );
+      },
     );
   }
 }
