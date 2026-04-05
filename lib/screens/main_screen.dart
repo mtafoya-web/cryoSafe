@@ -42,8 +42,9 @@ class MainScreen extends StatelessWidget {
                   child: ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 1440),
                     child: isWide
-                        ? Padding(
-                            padding: const EdgeInsets.fromLTRB(24, 14, 24, 22),
+                        ? SingleChildScrollView(
+                            padding: const EdgeInsets.fromLTRB(24, 14, 24, 28),
+                            physics: const BouncingScrollPhysics(),
                             child: Column(
                               children: [
                                 _DashboardHero(
@@ -51,56 +52,51 @@ class MainScreen extends StatelessWidget {
                                   compact: useCompactDesktop,
                                 ),
                                 SizedBox(height: useCompactDesktop ? 18 : 22),
-                                Expanded(
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.stretch,
-                                    children: [
-                                      SizedBox(
-                                        width: desktopRailWidth,
-                                        child: SingleChildScrollView(
-                                          physics:
-                                              const BouncingScrollPhysics(),
-                                          child: InputPanel(
-                                            controller: controller,
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    SizedBox(
+                                      width: desktopRailWidth,
+                                      child: InputPanel(
+                                        controller: controller,
+                                        compact: useCompactDesktop,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: useCompactDesktop ? 20 : 28,
+                                    ),
+                                    Expanded(
+                                      child: Column(
+                                        children: [
+                                          ResultCard(
+                                            result: controller.result,
+                                            meatType: controller.meatType,
+                                            fridgeTempF: controller
+                                                .ambientFridgeTempF,
+                                            initialTempF:
+                                                controller.initialMeatTempF,
+                                            thicknessInches:
+                                                controller.thicknessInches,
+                                            summary:
+                                                controller.safetySummary,
                                             compact: useCompactDesktop,
                                           ),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: useCompactDesktop ? 20 : 28,
-                                      ),
-                                      Expanded(
-                                        child: Column(
-                                          children: [
-                                            ResultCard(
-                                              result: controller.result,
-                                              meatType: controller.meatType,
-                                              fridgeTempF: controller
-                                                  .ambientFridgeTempF,
-                                              initialTempF:
-                                                  controller.initialMeatTempF,
-                                              thicknessInches:
-                                                  controller.thicknessInches,
-                                              summary:
-                                                  controller.safetySummary,
+                                          SizedBox(
+                                            height:
+                                                useCompactDesktop ? 16 : 20,
+                                          ),
+                                          SizedBox(
+                                            height:
+                                                useCompactDesktop ? 620 : 700,
+                                            child: TemperatureChart(
+                                              points: controller.points,
                                               compact: useCompactDesktop,
                                             ),
-                                            SizedBox(
-                                              height:
-                                                  useCompactDesktop ? 16 : 20,
-                                            ),
-                                            Expanded(
-                                              child: TemperatureChart(
-                                                points: controller.points,
-                                                compact: useCompactDesktop,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
+                                          ),
+                                        ],
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
