@@ -59,49 +59,16 @@ class _MainScreenState extends State<MainScreen> {
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 1360),
                 child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    final showSidebar = constraints.maxWidth >= 1120;
-
-                    if (showSidebar) {
-                      return Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              width: 180,
-                              child: _SectionSidebar(
-                                onOpenSimulation: () => _scrollTo(_analysisKey),
-                                onOpenHowTo: () => _scrollTo(_notesKey),
-                              ),
-                            ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: _ScreenContent(
-                                controller: controller,
-                                analysisKey: _analysisKey,
-                                notesKey: _notesKey,
-                                onOpenSimulation: () => _scrollTo(_analysisKey),
-                                onOpenHowTo: () => _scrollTo(_notesKey),
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    }
-
-                    return Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
-                      child: _ScreenContent(
-                        controller: controller,
-                        analysisKey: _analysisKey,
-                        notesKey: _notesKey,
-                        onOpenSimulation: () => _scrollTo(_analysisKey),
-                        onOpenHowTo: () => _scrollTo(_notesKey),
-                        showCompactJumpBar: true,
-                      ),
-                    );
-                  },
+                  builder: (context, constraints) => Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+                    child: _ScreenContent(
+                      controller: controller,
+                      analysisKey: _analysisKey,
+                      notesKey: _notesKey,
+                      onOpenSimulation: () => _scrollTo(_analysisKey),
+                      onOpenHowTo: () => _scrollTo(_notesKey),
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -119,7 +86,6 @@ class _ScreenContent extends StatelessWidget {
     required this.notesKey,
     required this.onOpenSimulation,
     required this.onOpenHowTo,
-    this.showCompactJumpBar = false,
   });
 
   final ThawController controller;
@@ -127,7 +93,6 @@ class _ScreenContent extends StatelessWidget {
   final GlobalKey notesKey;
   final VoidCallback onOpenSimulation;
   final VoidCallback onOpenHowTo;
-  final bool showCompactJumpBar;
 
   @override
   Widget build(BuildContext context) {
@@ -136,14 +101,11 @@ class _ScreenContent extends StatelessWidget {
         parent: BouncingScrollPhysics(),
       ),
       children: [
-        _HeaderBar(controller: controller),
-        if (showCompactJumpBar) ...[
-          const SizedBox(height: 12),
-          _CompactJumpBar(
-            onOpenSimulation: onOpenSimulation,
-            onOpenHowTo: onOpenHowTo,
-          ),
-        ],
+        _HeaderBar(
+          controller: controller,
+          onOpenSimulation: onOpenSimulation,
+          onOpenHowTo: onOpenHowTo,
+        ),
         const SizedBox(height: 12),
         KeyedSubtree(
           key: analysisKey,
@@ -159,132 +121,16 @@ class _ScreenContent extends StatelessWidget {
   }
 }
 
-class _SectionSidebar extends StatelessWidget {
-  const _SectionSidebar({
-    required this.onOpenSimulation,
-    required this.onOpenHowTo,
-  });
-
-  final VoidCallback onOpenSimulation;
-  final VoidCallback onOpenHowTo;
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Jump to',
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            const SizedBox(height: 6),
-            Text(
-              'Quick navigation for the main work area and how-to guidance.',
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
-            const SizedBox(height: 14),
-            _SidebarButton(
-              icon: Icons.analytics_rounded,
-              label: 'Simulation',
-              onTap: onOpenSimulation,
-            ),
-            const SizedBox(height: 10),
-            _SidebarButton(
-              icon: Icons.menu_book_rounded,
-              label: 'How-to',
-              onTap: onOpenHowTo,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _SidebarButton extends StatelessWidget {
-  const _SidebarButton({
-    required this.icon,
-    required this.label,
-    required this.onTap,
-  });
-
-  final IconData icon;
-  final String label;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: OutlinedButton.icon(
-        onPressed: onTap,
-        icon: Icon(icon, size: 18),
-        label: Align(
-          alignment: Alignment.centerLeft,
-          child: Text(label),
-        ),
-        style: OutlinedButton.styleFrom(
-          alignment: Alignment.centerLeft,
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _CompactJumpBar extends StatelessWidget {
-  const _CompactJumpBar({
-    required this.onOpenSimulation,
-    required this.onOpenHowTo,
-  });
-
-  final VoidCallback onOpenSimulation;
-  final VoidCallback onOpenHowTo;
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Wrap(
-          spacing: 10,
-          runSpacing: 10,
-          children: [
-            ActionChip(
-              avatar: const Icon(
-                Icons.analytics_rounded,
-                size: 16,
-                color: AppTheme.frozenBlue,
-              ),
-              label: const Text('Simulation'),
-              onPressed: onOpenSimulation,
-            ),
-            ActionChip(
-              avatar: const Icon(
-                Icons.menu_book_rounded,
-                size: 16,
-                color: AppTheme.frozenBlue,
-              ),
-              label: const Text('How-to'),
-              onPressed: onOpenHowTo,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 class _HeaderBar extends StatelessWidget {
-  const _HeaderBar({required this.controller});
+  const _HeaderBar({
+    required this.controller,
+    required this.onOpenSimulation,
+    required this.onOpenHowTo,
+  });
 
   final ThawController controller;
+  final VoidCallback onOpenSimulation;
+  final VoidCallback onOpenHowTo;
 
   @override
   Widget build(BuildContext context) {
@@ -304,24 +150,78 @@ class _HeaderBar extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
-              child: Text(
-                'Simulation workspace',
-                style: Theme.of(context).textTheme.titleLarge,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Simulation workspace',
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Use the header actions to jump between the model and the how-to section.',
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ],
               ),
             ),
             const SizedBox(width: 12),
-            _HeaderTag(
-              label: 'Estimate',
-              value: '${controller.estimatedHours.toStringAsFixed(1)} h',
-            ),
-            const SizedBox(width: 8),
-            _HeaderTag(
-              label: 'Units',
-              value: controller.temperatureUnit.symbol,
+            Wrap(
+              alignment: WrapAlignment.end,
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                _HeaderNavButton(
+                  label: 'Simulation',
+                  icon: Icons.analytics_rounded,
+                  onTap: onOpenSimulation,
+                ),
+                _HeaderNavButton(
+                  label: 'How-to',
+                  icon: Icons.menu_book_rounded,
+                  onTap: onOpenHowTo,
+                ),
+                _HeaderTag(
+                  label: 'Estimate',
+                  value: '${controller.estimatedHours.toStringAsFixed(1)} h',
+                ),
+                _HeaderTag(
+                  label: 'Units',
+                  value: controller.temperatureUnit.symbol,
+                ),
+              ],
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _HeaderNavButton extends StatelessWidget {
+  const _HeaderNavButton({
+    required this.label,
+    required this.icon,
+    required this.onTap,
+  });
+
+  final String label;
+  final IconData icon;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return OutlinedButton.icon(
+      onPressed: onTap,
+      icon: Icon(icon, size: 16),
+      label: Text(label),
+      style: OutlinedButton.styleFrom(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
         ),
       ),
     );
