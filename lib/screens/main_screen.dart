@@ -10,8 +10,30 @@ import '../widgets/temperature_chart.dart';
 import '../widgets/video_embed_stub.dart'
     if (dart.library.html) '../widgets/video_embed_web.dart';
 
-class MainScreen extends StatelessWidget {
+class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
+
+  @override
+  State<MainScreen> createState() => _MainScreenState();
+}
+
+class _MainScreenState extends State<MainScreen> {
+  final GlobalKey _analysisKey = GlobalKey();
+  final GlobalKey _notesKey = GlobalKey();
+
+  Future<void> _scrollTo(GlobalKey key) async {
+    final context = key.currentContext;
+    if (context == null) {
+      return;
+    }
+
+    await Scrollable.ensureVisible(
+      context,
+      duration: const Duration(milliseconds: 420),
+      curve: Curves.easeInOutCubic,
+      alignment: 0.04,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,23 +58,224 @@ class MainScreen extends StatelessWidget {
             child: Center(
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 1360),
-                child: ListView(
-                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
-                  physics: const AlwaysScrollableScrollPhysics(
-                    parent: BouncingScrollPhysics(),
-                  ),
-                  children: [
-                    _HeaderBar(controller: controller),
-                    const SizedBox(height: 12),
-                    _AnalysisWorkspace(controller: controller),
-                    const SizedBox(height: 8),
-                    _ThermoNotes(controller: controller),
-                  ],
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final showSidebar = constraints.maxWidth >= 1120;
+
+                    if (showSidebar) {
+                      return Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              width: 180,
+                              child: _SectionSidebar(
+                                onOpenSimulation: () => _scrollTo(_analysisKey),
+                                onOpenHowTo: () => _scrollTo(_notesKey),
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: _ScreenContent(
+                                controller: controller,
+                                analysisKey: _analysisKey,
+                                notesKey: _notesKey,
+                                onOpenSimulation: () => _scrollTo(_analysisKey),
+                                onOpenHowTo: () => _scrollTo(_notesKey),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+
+                    return Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+                      child: _ScreenContent(
+                        controller: controller,
+                        analysisKey: _analysisKey,
+                        notesKey: _notesKey,
+                        onOpenSimulation: () => _scrollTo(_analysisKey),
+                        onOpenHowTo: () => _scrollTo(_notesKey),
+                        showCompactJumpBar: true,
+                      ),
+                    );
+                  },
                 ),
               ),
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _ScreenContent extends StatelessWidget {
+  const _ScreenContent({
+    required this.controller,
+    required this.analysisKey,
+    required this.notesKey,
+    required this.onOpenSimulation,
+    required this.onOpenHowTo,
+    this.showCompactJumpBar = false,
+  });
+
+  final ThawController controller;
+  final GlobalKey analysisKey;
+  final GlobalKey notesKey;
+  final VoidCallback onOpenSimulation;
+  final VoidCallback onOpenHowTo;
+  final bool showCompactJumpBar;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      physics: const AlwaysScrollableScrollPhysics(
+        parent: BouncingScrollPhysics(),
+      ),
+      children: [
+        _HeaderBar(controller: controller),
+        if (showCompactJumpBar) ...[
+          const SizedBox(height: 12),
+          _CompactJumpBar(
+            onOpenSimulation: onOpenSimulation,
+            onOpenHowTo: onOpenHowTo,
+          ),
+        ],
+        const SizedBox(height: 12),
+        KeyedSubtree(
+          key: analysisKey,
+          child: _AnalysisWorkspace(controller: controller),
+        ),
+        const SizedBox(height: 8),
+        KeyedSubtree(
+          key: notesKey,
+          child: _ThermoNotes(controller: controller),
+        ),
+      ],
+    );
+  }
+}
+
+class _SectionSidebar extends StatelessWidget {
+  const _SectionSidebar({
+    required this.onOpenSimulation,
+    required this.onOpenHowTo,
+  });
+
+  final VoidCallback onOpenSimulation;
+  final VoidCallback onOpenHowTo;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Jump to',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            const SizedBox(height: 6),
+            Text(
+              'Quick navigation for the main work area and how-to guidance.',
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+            const SizedBox(height: 14),
+            _SidebarButton(
+              icon: Icons.analytics_rounded,
+              label: 'Simulation',
+              onTap: onOpenSimulation,
+            ),
+            const SizedBox(height: 10),
+            _SidebarButton(
+              icon: Icons.menu_book_rounded,
+              label: 'How-to',
+              onTap: onOpenHowTo,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SidebarButton extends StatelessWidget {
+  const _SidebarButton({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: OutlinedButton.icon(
+        onPressed: onTap,
+        icon: Icon(icon, size: 18),
+        label: Align(
+          alignment: Alignment.centerLeft,
+          child: Text(label),
+        ),
+        style: OutlinedButton.styleFrom(
+          alignment: Alignment.centerLeft,
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _CompactJumpBar extends StatelessWidget {
+  const _CompactJumpBar({
+    required this.onOpenSimulation,
+    required this.onOpenHowTo,
+  });
+
+  final VoidCallback onOpenSimulation;
+  final VoidCallback onOpenHowTo;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Wrap(
+          spacing: 10,
+          runSpacing: 10,
+          children: [
+            ActionChip(
+              avatar: const Icon(
+                Icons.analytics_rounded,
+                size: 16,
+                color: AppTheme.frozenBlue,
+              ),
+              label: const Text('Simulation'),
+              onPressed: onOpenSimulation,
+            ),
+            ActionChip(
+              avatar: const Icon(
+                Icons.menu_book_rounded,
+                size: 16,
+                color: AppTheme.frozenBlue,
+              ),
+              label: const Text('How-to'),
+              onPressed: onOpenHowTo,
+            ),
+          ],
+        ),
       ),
     );
   }
