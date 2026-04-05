@@ -2,17 +2,23 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
 import '../models/temperature_point.dart';
+import '../models/temperature_unit.dart';
 import '../theme/app_theme.dart';
-import '../utils/temperature_formatter.dart';
 
 class TemperatureChart extends StatelessWidget {
   const TemperatureChart({
     super.key,
     required this.points,
+    required this.unit,
+    required this.frozenThreshold,
+    required this.safeThreshold,
     this.compact = false,
   });
 
   final List<TemperaturePoint> points;
+  final TemperatureUnit unit;
+  final double frozenThreshold;
+  final double safeThreshold;
   final bool compact;
 
   @override
@@ -20,6 +26,8 @@ class TemperatureChart extends StatelessWidget {
     final spots =
         points.map((point) => FlSpot(point.hours, point.temperatureF)).toList();
     final maxX = points.isEmpty ? 12.0 : points.last.hours.clamp(6, 48).toDouble();
+    final minY = unit == TemperatureUnit.kelvin ? 250.0 : -10.0;
+    final maxY = unit == TemperatureUnit.kelvin ? 285.0 : 50.0;
 
     return Card(
       child: Container(
@@ -101,8 +109,8 @@ class TemperatureChart extends StatelessWidget {
                         LineChartData(
                           minX: 0,
                           maxX: maxX,
-                          minY: -10,
-                          maxY: 50,
+                          minY: minY,
+                          maxY: maxY,
                           lineTouchData: LineTouchData(
                             handleBuiltInTouches: true,
                             touchTooltipData: LineTouchTooltipData(
@@ -112,7 +120,7 @@ class TemperatureChart extends StatelessWidget {
                               getTooltipItems: (touchedSpots) => touchedSpots
                                   .map(
                                     (spot) => LineTooltipItem(
-                                      '${spot.x.toStringAsFixed(1)}h\n${formatTemperature(spot.y)}',
+                                      '${spot.x.toStringAsFixed(1)}h\n${spot.y.toStringAsFixed(unit == TemperatureUnit.kelvin ? 2 : 1)}${unit.symbol}',
                                       const TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.w600,
@@ -146,7 +154,7 @@ class TemperatureChart extends StatelessWidget {
                           extraLinesData: ExtraLinesData(
                             horizontalLines: [
                               HorizontalLine(
-                                y: 32,
+                                y: frozenThreshold,
                                 color: AppTheme.frozenBlue.withValues(alpha: 0.35),
                                 strokeWidth: 1.5,
                                 dashArray: [6, 4],
@@ -163,11 +171,12 @@ class TemperatureChart extends StatelessWidget {
                                             fontWeight: FontWeight.w700,
                                           ) ??
                                       const TextStyle(),
-                                  labelResolver: (_) => '32°F thaw point',
+                                  labelResolver: (_) =>
+                                      '${frozenThreshold.toStringAsFixed(unit == TemperatureUnit.kelvin ? 2 : 1)}${unit.symbol} thaw point',
                                 ),
                               ),
                               HorizontalLine(
-                                y: 41,
+                                y: safeThreshold,
                                 color: AppTheme.safeGreen.withValues(alpha: 0.4),
                                 strokeWidth: 1.5,
                                 dashArray: [6, 4],
@@ -184,7 +193,8 @@ class TemperatureChart extends StatelessWidget {
                                             fontWeight: FontWeight.w700,
                                           ) ??
                                       const TextStyle(),
-                                  labelResolver: (_) => '41°F target',
+                                  labelResolver: (_) =>
+                                      '${safeThreshold.toStringAsFixed(unit == TemperatureUnit.kelvin ? 2 : 1)}${unit.symbol} target',
                                 ),
                               ),
                             ],
@@ -192,18 +202,18 @@ class TemperatureChart extends StatelessWidget {
                           rangeAnnotations: RangeAnnotations(
                             horizontalRangeAnnotations: [
                               HorizontalRangeAnnotation(
-                                y1: -10,
-                                y2: 32,
+                                y1: minY,
+                                y2: frozenThreshold,
                                 color: AppTheme.chartBlueTint,
                               ),
                               HorizontalRangeAnnotation(
-                                y1: 32,
-                                y2: 41,
+                                y1: frozenThreshold,
+                                y2: safeThreshold,
                                 color: AppTheme.chartGreenTint,
                               ),
                               HorizontalRangeAnnotation(
-                                y1: 41,
-                                y2: 50,
+                                y1: safeThreshold,
+                                y2: maxY,
                                 color: AppTheme.chartRedTint,
                               ),
                             ],
@@ -211,15 +221,15 @@ class TemperatureChart extends StatelessWidget {
                           titlesData: FlTitlesData(
                             leftTitles: AxisTitles(
                               axisNameWidget: Text(
-                                'Temp (°F)',
+                                'Temp (${unit.symbol})',
                                 style: Theme.of(context).textTheme.bodySmall,
                               ),
                               sideTitles: SideTitles(
                                 showTitles: true,
                                 reservedSize: compact ? 34 : 44,
-                                interval: 10,
+                                interval: unit == TemperatureUnit.kelvin ? 5 : 10,
                                 getTitlesWidget: (value, meta) => Text(
-                                  value.toInt().toString(),
+                                  value.toStringAsFixed(0),
                                   style: Theme.of(context).textTheme.bodySmall,
                                 ),
                               ),

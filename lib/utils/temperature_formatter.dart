@@ -1,4 +1,20 @@
-String formatTemperature(double value) => '${value.toStringAsFixed(1)}°F';
+import '../models/temperature_unit.dart';
+
+String formatTemperature(
+  double valueF, {
+  TemperatureUnit unit = TemperatureUnit.fahrenheit,
+}) {
+  final converted = unit.fromFahrenheit(valueF);
+  final decimals = unit == TemperatureUnit.kelvin ? 2 : 1;
+  return '${converted.toStringAsFixed(decimals)}${unit.symbol}';
+}
+
+double convertTemperature(
+  double valueF, {
+  TemperatureUnit unit = TemperatureUnit.fahrenheit,
+}) {
+  return unit.fromFahrenheit(valueF);
+}
 
 String formatHours(double value) => '${value.toStringAsFixed(1)} hrs';
 

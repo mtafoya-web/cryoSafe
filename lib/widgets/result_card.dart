@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/meat_type.dart';
 import '../models/thaw_result.dart';
+import '../models/temperature_unit.dart';
 import '../theme/app_theme.dart';
 import '../utils/temperature_formatter.dart';
 
@@ -14,6 +15,7 @@ class ResultCard extends StatelessWidget {
     required this.initialTempF,
     required this.thicknessInches,
     required this.summary,
+    required this.temperatureUnit,
     this.compact = false,
   });
 
@@ -23,6 +25,7 @@ class ResultCard extends StatelessWidget {
   final double initialTempF;
   final double thicknessInches;
   final String summary;
+  final TemperatureUnit temperatureUnit;
   final bool compact;
 
   @override
@@ -72,7 +75,7 @@ class ResultCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Estimated Time To 41°F',
+                          'Estimated Time To Safe Thaw',
                           style: Theme.of(context).textTheme.titleMedium,
                         ),
                         SizedBox(height: compact ? 6 : 8),
@@ -111,11 +114,17 @@ class ResultCard extends StatelessWidget {
                   _MetricPill(label: 'Protein', value: meatType.label),
                   _MetricPill(
                     label: 'Fridge',
-                    value: formatTemperature(fridgeTempF),
+                    value: formatTemperature(
+                      fridgeTempF,
+                      unit: temperatureUnit,
+                    ),
                   ),
                   _MetricPill(
                     label: 'Start',
-                    value: formatTemperature(initialTempF),
+                    value: formatTemperature(
+                      initialTempF,
+                      unit: temperatureUnit,
+                    ),
                   ),
                   _MetricPill(
                     label: 'Thickness',

@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 
 import '../models/meat_type.dart';
 import '../models/temperature_point.dart';
+import '../models/temperature_unit.dart';
 import '../models/thermo_model.dart';
 import '../models/thaw_result.dart';
 
@@ -15,6 +16,7 @@ class ThawController extends ChangeNotifier {
   double _initialMeatTempF = 5;
   double _thicknessInches = 1.5;
   MeatType _meatType = MeatType.chicken;
+  TemperatureUnit _temperatureUnit = TemperatureUnit.fahrenheit;
 
   ThawResult _result = const ThawResult.empty();
 
@@ -24,12 +26,32 @@ class ThawController extends ChangeNotifier {
   double get initialMeatTempF => _initialMeatTempF;
   double get thicknessInches => _thicknessInches;
   MeatType get meatType => _meatType;
+  TemperatureUnit get temperatureUnit => _temperatureUnit;
   double get estimatedHours => _result.hoursToSafeTemp;
   double get chartMaxHours =>
       points.isEmpty ? 12 : points.last.hours.clamp(6, 48).toDouble();
   double get phaseStartHours => _result.hoursToPhaseStart;
   double get plateauDurationHours => _result.plateauDurationHours;
   bool get safeTargetReached => _result.safeTargetReached;
+  double get ambientFridgeTempDisplay =>
+      _temperatureUnit.fromFahrenheit(_ambientFridgeTempF);
+  double get initialMeatTempDisplay =>
+      _temperatureUnit.fromFahrenheit(_initialMeatTempF);
+  double get fridgeMinDisplay => _temperatureUnit.fromFahrenheit(33);
+  double get fridgeMaxDisplay => _temperatureUnit.fromFahrenheit(45);
+  double get meatMinDisplay => _temperatureUnit.fromFahrenheit(-10);
+  double get meatMaxDisplay => _temperatureUnit.fromFahrenheit(32);
+  double get frozenThresholdDisplay => _temperatureUnit.fromFahrenheit(32);
+  double get safeThresholdDisplay => _temperatureUnit.fromFahrenheit(41);
+  List<TemperaturePoint> get displayPoints => _result.points
+      .map(
+        (point) => TemperaturePoint(
+          hours: point.hours,
+          temperatureF:
+              _temperatureUnit.fromFahrenheit(point.temperatureF),
+        ),
+      )
+      .toList();
 
   String get safetySummary {
     if (_result.safeTargetReached) {
@@ -43,8 +65,20 @@ class ThawController extends ChangeNotifier {
     recalculate();
   }
 
+  void updateAmbientFridgeTempDisplay(double value) {
+    _ambientFridgeTempF =
+        _temperatureUnit.toFahrenheit(value).clamp(33.0, 45.0);
+    recalculate();
+  }
+
   void updateInitialMeatTemp(double value) {
     _initialMeatTempF = value.clamp(-10.0, 32.0);
+    recalculate();
+  }
+
+  void updateInitialMeatTempDisplay(double value) {
+    _initialMeatTempF =
+        _temperatureUnit.toFahrenheit(value).clamp(-10.0, 32.0);
     recalculate();
   }
 
@@ -56,6 +90,14 @@ class ThawController extends ChangeNotifier {
   void updateMeatType(MeatType value) {
     _meatType = value;
     recalculate();
+  }
+
+  void updateTemperatureUnit(TemperatureUnit value) {
+    if (_temperatureUnit == value) {
+      return;
+    }
+    _temperatureUnit = value;
+    notifyListeners();
   }
 
   void recalculate() {

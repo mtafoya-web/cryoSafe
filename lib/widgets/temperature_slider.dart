@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../utils/temperature_formatter.dart';
-
 class TemperatureSlider extends StatelessWidget {
   const TemperatureSlider({
     super.key,
@@ -12,6 +10,10 @@ class TemperatureSlider extends StatelessWidget {
     required this.max,
     required this.activeColor,
     required this.onChanged,
+    required this.valueLabel,
+    required this.minLabel,
+    required this.maxLabel,
+    this.divisions,
     this.compact = false,
   });
 
@@ -22,6 +24,10 @@ class TemperatureSlider extends StatelessWidget {
   final double max;
   final Color activeColor;
   final ValueChanged<double> onChanged;
+  final String valueLabel;
+  final String minLabel;
+  final String maxLabel;
+  final int? divisions;
   final bool compact;
 
   @override
@@ -54,7 +60,7 @@ class TemperatureSlider extends StatelessWidget {
                 borderRadius: BorderRadius.circular(999),
               ),
               child: Text(
-                formatTemperature(value),
+                valueLabel,
                 style: Theme.of(context).textTheme.labelLarge?.copyWith(
                       color: activeColor,
                     ),
@@ -75,18 +81,16 @@ class TemperatureSlider extends StatelessWidget {
             value: value,
             min: min,
             max: max,
-            divisions: ((max - min) * 2).round(),
-            label: formatTemperature(value),
+            divisions: divisions ?? ((max - min) * 2).round(),
+            label: valueLabel,
             onChanged: onChanged,
           ),
         ),
         Row(
           children: [
-            Text(formatTemperature(min),
-                style: Theme.of(context).textTheme.bodySmall),
+            Text(minLabel, style: Theme.of(context).textTheme.bodySmall),
             const Spacer(),
-            Text(formatTemperature(max),
-                style: Theme.of(context).textTheme.bodySmall),
+            Text(maxLabel, style: Theme.of(context).textTheme.bodySmall),
           ],
         ),
       ],

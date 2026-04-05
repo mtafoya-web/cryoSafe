@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../controllers/thaw_controller.dart';
+import '../models/temperature_unit.dart';
 import '../theme/app_theme.dart';
+import '../utils/temperature_formatter.dart';
 import 'meat_type_dropdown.dart';
 import 'temperature_slider.dart';
 import 'thickness_slider.dart';
@@ -47,41 +49,56 @@ class InputPanel extends StatelessWidget {
               'Simulation Inputs',
               style: Theme.of(context).textTheme.titleLarge,
             ),
-            if (!compact) ...[
-              const SizedBox(height: 6),
-              Text(
-                'Adjust the refrigerator environment and meat geometry to estimate a safe thaw curve in real time.',
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-              const SizedBox(height: 16),
-              const _InfoCallout(
-                icon: Icons.thermostat_rounded,
-                title: 'Safety target',
-                body:
-                    'The dashboard estimates when the center of the cut reaches 41°F under refrigerator conditions.',
-              ),
-              const SizedBox(height: 16),
-            ] else
-              const SizedBox(height: 12),
+            const SizedBox(height: 12),
             TemperatureSlider(
               label: 'Fridge Temperature',
               helper: 'Typical safe refrigerator range',
-              value: controller.ambientFridgeTempF,
-              min: 33,
-              max: 45,
+              value: controller.ambientFridgeTempDisplay,
+              min: controller.fridgeMinDisplay,
+              max: controller.fridgeMaxDisplay,
               activeColor: AppTheme.frozenBlue,
-              onChanged: controller.updateAmbientFridgeTemp,
+              onChanged: controller.updateAmbientFridgeTempDisplay,
+              valueLabel: formatTemperature(
+                controller.ambientFridgeTempF,
+                unit: controller.temperatureUnit,
+              ),
+              minLabel: formatTemperature(
+                33,
+                unit: controller.temperatureUnit,
+              ),
+              maxLabel: formatTemperature(
+                45,
+                unit: controller.temperatureUnit,
+              ),
+              divisions: controller.temperatureUnit == TemperatureUnit.kelvin
+                  ? 24
+                  : null,
               compact: compact,
             ),
             SizedBox(height: compact ? 12 : 18),
             TemperatureSlider(
               label: 'Initial Meat Temperature',
               helper: 'Starting core temperature',
-              value: controller.initialMeatTempF,
-              min: -10,
-              max: 32,
+              value: controller.initialMeatTempDisplay,
+              min: controller.meatMinDisplay,
+              max: controller.meatMaxDisplay,
               activeColor: AppTheme.dangerRed,
-              onChanged: controller.updateInitialMeatTemp,
+              onChanged: controller.updateInitialMeatTempDisplay,
+              valueLabel: formatTemperature(
+                controller.initialMeatTempF,
+                unit: controller.temperatureUnit,
+              ),
+              minLabel: formatTemperature(
+                -10,
+                unit: controller.temperatureUnit,
+              ),
+              maxLabel: formatTemperature(
+                32,
+                unit: controller.temperatureUnit,
+              ),
+              divisions: controller.temperatureUnit == TemperatureUnit.kelvin
+                  ? 42
+                  : null,
               compact: compact,
             ),
             SizedBox(height: compact ? 12 : 18),
@@ -97,18 +114,11 @@ class InputPanel extends StatelessWidget {
               onChanged: controller.updateMeatType,
               compact: compact,
             ),
-            if (!compact) ...[
-              const SizedBox(height: 22),
-              const Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: [
-                  _FactChip(label: 'Newton cooling'),
-                  _FactChip(label: 'Phase change near 32°F'),
-                  _FactChip(label: 'Real-time updates'),
-                ],
-              ),
-            ],
+            SizedBox(height: compact ? 16 : 22),
+            _UnitSelector(
+              value: controller.temperatureUnit,
+              onChanged: controller.updateTemperatureUnit,
+            ),
           ],
         ),
       ),
@@ -116,73 +126,37 @@ class InputPanel extends StatelessWidget {
   }
 }
 
-class _InfoCallout extends StatelessWidget {
-  const _InfoCallout({
-    required this.icon,
-    required this.title,
-    required this.body,
+class _UnitSelector extends StatelessWidget {
+  const _UnitSelector({
+    required this.value,
+    required this.onChanged,
   });
 
-  final IconData icon;
-  final String title;
-  final String body;
+  final TemperatureUnit value;
+  final ValueChanged<TemperatureUnit> onChanged;
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            AppTheme.chartBlueTint,
-            AppTheme.chartBlueTint.withValues(alpha: 0.5),
-          ],
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Temperature Units', style: Theme.of(context).textTheme.labelLarge),
+        const SizedBox(height: 8),
+        SegmentedButton<TemperatureUnit>(
+          showSelectedIcon: false,
+          multiSelectionEnabled: false,
+          segments: TemperatureUnit.values
+              .map(
+                (unit) => ButtonSegment<TemperatureUnit>(
+                  value: unit,
+                  label: Text(unit.label),
+                ),
+              )
+              .toList(),
+          selected: {value},
+          onSelectionChanged: (selection) => onChanged(selection.first),
         ),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 2),
-              child: Icon(icon, color: AppTheme.frozenBlue),
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(title, style: Theme.of(context).textTheme.labelLarge),
-                  const SizedBox(height: 4),
-                  Text(body, style: Theme.of(context).textTheme.bodyMedium),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _FactChip extends StatelessWidget {
-  const _FactChip({required this.label});
-
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: AppTheme.borderColor),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        child: Text(label, style: Theme.of(context).textTheme.bodyMedium),
-      ),
+      ],
     );
   }
 }
