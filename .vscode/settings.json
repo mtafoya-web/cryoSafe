@@ -1,0 +1,7 @@
+{
+  "dart.flutterRunAdditionalArgs": [
+    "-d",
+    "chrome"
+  ],
+  "dart.openDevTools": "flutter"
+}
