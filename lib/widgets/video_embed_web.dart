@@ -54,12 +54,12 @@ class _VideoEmbedState extends State<VideoEmbed> {
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.surface(context),
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: AppTheme.borderColor),
+        border: Border.all(color: AppTheme.outline(context)),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.softShadow.withValues(alpha: 0.28),
+            color: AppTheme.shadow(context).withValues(alpha: 0.24),
             blurRadius: 18,
             offset: const Offset(0, 8),
           ),
@@ -76,7 +76,7 @@ class _VideoEmbedState extends State<VideoEmbed> {
                   width: 30,
                   height: 30,
                   decoration: BoxDecoration(
-                    color: AppTheme.chartRedTint,
+                    color: AppTheme.redTint(context),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: const Icon(
@@ -111,9 +111,9 @@ class _VideoEmbedState extends State<VideoEmbed> {
             Container(
               width: double.infinity,
               decoration: BoxDecoration(
-                color: AppTheme.panelColor,
+                color: AppTheme.panelSurface(context),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppTheme.borderColor),
+                border: Border.all(color: AppTheme.outline(context)),
               ),
               child: Link(
                 uri: Uri.parse(widget.watchUrl),

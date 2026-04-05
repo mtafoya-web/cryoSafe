@@ -33,17 +33,17 @@ class TemperatureChart extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(28),
-          gradient: const LinearGradient(
+          gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Colors.white,
-              Color(0xFFF9FBFF),
+              AppTheme.surface(context),
+              AppTheme.panelSurface(context),
             ],
           ),
           boxShadow: [
             BoxShadow(
-              color: AppTheme.softShadow.withValues(alpha: 0.75),
+              color: AppTheme.shadow(context).withValues(alpha: 0.55),
               blurRadius: 34,
               offset: const Offset(0, 16),
             ),
@@ -94,7 +94,7 @@ class TemperatureChart extends StatelessWidget {
                   child: DecoratedBox(
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: AppTheme.borderColor.withValues(alpha: 0.75),
+                        color: AppTheme.outline(context).withValues(alpha: 0.75),
                       ),
                       borderRadius: BorderRadius.circular(24),
                     ),
@@ -116,13 +116,13 @@ class TemperatureChart extends StatelessWidget {
                             touchTooltipData: LineTouchTooltipData(
                               fitInsideHorizontally: true,
                               fitInsideVertically: true,
-                              getTooltipColor: (_) => AppTheme.inkColor,
+                              getTooltipColor: (_) => AppTheme.ink(context),
                               getTooltipItems: (touchedSpots) => touchedSpots
                                   .map(
                                     (spot) => LineTooltipItem(
                                       '${spot.x.toStringAsFixed(1)}h\n${spot.y.toStringAsFixed(unit == TemperatureUnit.kelvin ? 2 : 1)}${unit.symbol}',
-                                      const TextStyle(
-                                        color: Colors.white,
+                                      TextStyle(
+                                        color: AppTheme.surface(context),
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
@@ -133,8 +133,8 @@ class TemperatureChart extends StatelessWidget {
                                 spotIndexes
                                     .map(
                                       (_) => TouchedSpotIndicatorData(
-                                        const FlLine(
-                                          color: AppTheme.inkColor,
+                                        FlLine(
+                                          color: AppTheme.ink(context),
                                           strokeWidth: 1,
                                           dashArray: [3, 3],
                                         ),
@@ -142,8 +142,8 @@ class TemperatureChart extends StatelessWidget {
                                           getDotPainter: (_, __, ___, ____) =>
                                               FlDotCirclePainter(
                                             radius: 5,
-                                            color: Colors.white,
-                                            strokeColor: AppTheme.inkColor,
+                                            color: AppTheme.surface(context),
+                                            strokeColor: AppTheme.ink(context),
                                             strokeWidth: 2,
                                           ),
                                         ),
@@ -204,17 +204,17 @@ class TemperatureChart extends StatelessWidget {
                               HorizontalRangeAnnotation(
                                 y1: minY,
                                 y2: frozenThreshold,
-                                color: AppTheme.chartBlueTint,
+                                color: AppTheme.blueTint(context),
                               ),
                               HorizontalRangeAnnotation(
                                 y1: frozenThreshold,
                                 y2: safeThreshold,
-                                color: AppTheme.chartGreenTint,
+                                color: AppTheme.greenTint(context),
                               ),
                               HorizontalRangeAnnotation(
                                 y1: safeThreshold,
                                 y2: maxY,
-                                color: AppTheme.chartRedTint,
+                                color: AppTheme.redTint(context),
                               ),
                             ],
                           ),
@@ -262,12 +262,12 @@ class TemperatureChart extends StatelessWidget {
                             verticalInterval: 2,
                             getDrawingHorizontalLine: (_) => FlLine(
                               color:
-                                  AppTheme.borderColor.withValues(alpha: 0.55),
+                                  AppTheme.outline(context).withValues(alpha: 0.55),
                               strokeWidth: 1,
                             ),
                             getDrawingVerticalLine: (_) => FlLine(
                               color:
-                                  AppTheme.borderColor.withValues(alpha: 0.28),
+                                  AppTheme.outline(context).withValues(alpha: 0.28),
                               strokeWidth: 1,
                             ),
                           ),
@@ -296,7 +296,7 @@ class TemperatureChart extends StatelessWidget {
                                 getDotPainter: (_, __, ___, ____) =>
                                     FlDotCirclePainter(
                                   radius: 4,
-                                  color: Colors.white,
+                                  color: AppTheme.surface(context),
                                   strokeWidth: 2,
                                   strokeColor: AppTheme.frozenBlue,
                                 ),

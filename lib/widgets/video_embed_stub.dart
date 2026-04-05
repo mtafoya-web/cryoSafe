@@ -21,12 +21,12 @@ class VideoEmbed extends StatelessWidget {
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.surface(context),
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: AppTheme.borderColor),
+        border: Border.all(color: AppTheme.outline(context)),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.softShadow.withValues(alpha: 0.28),
+            color: AppTheme.shadow(context).withValues(alpha: 0.24),
             blurRadius: 18,
             offset: const Offset(0, 8),
           ),
@@ -43,7 +43,7 @@ class VideoEmbed extends StatelessWidget {
                   width: 30,
                   height: 30,
                   decoration: BoxDecoration(
-                    color: AppTheme.chartRedTint,
+                    color: AppTheme.redTint(context),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: const Icon(
@@ -71,9 +71,9 @@ class VideoEmbed extends StatelessWidget {
               aspectRatio: 16 / 10,
               child: DecoratedBox(
                 decoration: BoxDecoration(
-                  color: AppTheme.panelColor,
+                  color: AppTheme.panelSurface(context),
                   borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: AppTheme.borderColor),
+                  border: Border.all(color: AppTheme.outline(context)),
                 ),
                 child: Center(
                   child: Padding(
@@ -91,9 +91,9 @@ class VideoEmbed extends StatelessWidget {
             Container(
               width: double.infinity,
               decoration: BoxDecoration(
-                color: AppTheme.panelColor,
+                color: AppTheme.panelSurface(context),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppTheme.borderColor),
+                border: Border.all(color: AppTheme.outline(context)),
               ),
               child: Link(
                 uri: Uri.parse(watchUrl),

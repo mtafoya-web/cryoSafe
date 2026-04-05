@@ -41,13 +41,13 @@ class ResultCard extends StatelessWidget {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Colors.white,
-              accent.withValues(alpha: 0.05),
+              AppTheme.surface(context),
+              accent.withValues(alpha: AppTheme.isDark(context) ? 0.12 : 0.05),
             ],
           ),
           boxShadow: [
             BoxShadow(
-              color: accent.withValues(alpha: 0.12),
+              color: accent.withValues(alpha: AppTheme.isDark(context) ? 0.18 : 0.12),
               blurRadius: 30,
               offset: const Offset(0, 14),
             ),
@@ -90,7 +90,7 @@ class ResultCard extends StatelessWidget {
                             ),
                             style:
                                 Theme.of(context).textTheme.headlineLarge?.copyWith(
-                                      color: AppTheme.inkColor,
+                                      color: AppTheme.ink(context),
                                       height: 1,
                                       fontSize: compact ? 38 : null,
                                     ),
@@ -167,8 +167,10 @@ class _MetricPill extends StatelessWidget {
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.84),
-        border: Border.all(color: AppTheme.borderColor),
+        color: AppTheme.surface(context).withValues(
+          alpha: AppTheme.isDark(context) ? 0.92 : 0.84,
+        ),
+        border: Border.all(color: AppTheme.outline(context)),
         borderRadius: BorderRadius.circular(999),
       ),
       child: Padding(

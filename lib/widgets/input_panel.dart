@@ -27,14 +27,14 @@ class InputPanel extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Colors.white.withValues(alpha: 0.94),
-            const Color(0xFFF8FBFF),
+            AppTheme.surface(context).withValues(alpha: 0.96),
+            AppTheme.panelSurface(context),
           ],
         ),
-        border: Border.all(color: Colors.white),
+        border: Border.all(color: AppTheme.outline(context)),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.softShadow.withValues(alpha: 0.8),
+            color: AppTheme.shadow(context).withValues(alpha: 0.55),
             blurRadius: 36,
             offset: const Offset(0, 16),
           ),

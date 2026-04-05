@@ -103,8 +103,6 @@ class _ScreenContent extends StatelessWidget {
       children: [
         _HeaderBar(
           controller: controller,
-          onOpenSimulation: onOpenSimulation,
-          onOpenHowTo: onOpenHowTo,
         ),
         const SizedBox(height: 12),
         KeyedSubtree(
@@ -124,24 +122,20 @@ class _ScreenContent extends StatelessWidget {
 class _HeaderBar extends StatelessWidget {
   const _HeaderBar({
     required this.controller,
-    required this.onOpenSimulation,
-    required this.onOpenHowTo,
   });
 
   final ThawController controller;
-  final VoidCallback onOpenSimulation;
-  final VoidCallback onOpenHowTo;
 
   @override
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.9),
+        color: AppTheme.surface(context).withValues(alpha: 0.92),
         borderRadius: BorderRadius.circular(22),
-        border: Border.all(color: Colors.white),
+        border: Border.all(color: AppTheme.outline(context)),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.softShadow.withValues(alpha: 0.65),
+            color: AppTheme.shadow(context).withValues(alpha: 0.5),
             blurRadius: 24,
             offset: const Offset(0, 12),
           ),
@@ -162,7 +156,7 @@ class _HeaderBar extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Use the header actions to jump between the model and the how-to section.',
+                    'Use the theme toggle to switch between system, light, and dark modes.',
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                 ],
@@ -174,16 +168,6 @@ class _HeaderBar extends StatelessWidget {
               spacing: 8,
               runSpacing: 8,
               children: [
-                _HeaderNavButton(
-                  label: 'Simulation',
-                  icon: Icons.analytics_rounded,
-                  onTap: onOpenSimulation,
-                ),
-                _HeaderNavButton(
-                  label: 'How-to',
-                  icon: Icons.menu_book_rounded,
-                  onTap: onOpenHowTo,
-                ),
                 _ThemeToggleButton(controller: controller),
                 _HeaderTag(
                   label: 'Estimate',
@@ -196,33 +180,6 @@ class _HeaderBar extends StatelessWidget {
               ],
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class _HeaderNavButton extends StatelessWidget {
-  const _HeaderNavButton({
-    required this.label,
-    required this.icon,
-    required this.onTap,
-  });
-
-  final String label;
-  final IconData icon;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return OutlinedButton.icon(
-      onPressed: onTap,
-      icon: Icon(icon, size: 16),
-      label: Text(label),
-      style: OutlinedButton.styleFrom(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
         ),
       ),
     );
@@ -269,9 +226,9 @@ class _HeaderTag extends StatelessWidget {
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: AppTheme.panelColor,
+        color: AppTheme.panelSurface(context),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppTheme.borderColor),
+        border: Border.all(color: AppTheme.outline(context)),
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
@@ -585,7 +542,7 @@ class _SectionHeader extends StatelessWidget {
           width: 36,
           height: 36,
           decoration: BoxDecoration(
-            color: AppTheme.chartBlueTint,
+            color: AppTheme.blueTint(context),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Icon(icon, size: 18, color: AppTheme.frozenBlue),
@@ -672,12 +629,12 @@ class _ResourceTile extends StatelessWidget {
             borderRadius: BorderRadius.circular(18),
             child: Ink(
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: AppTheme.surface(context),
                 borderRadius: BorderRadius.circular(18),
-                border: Border.all(color: AppTheme.borderColor),
+                border: Border.all(color: AppTheme.outline(context)),
                 boxShadow: [
                   BoxShadow(
-                    color: AppTheme.softShadow.withValues(alpha: 0.28),
+                    color: AppTheme.shadow(context).withValues(alpha: 0.24),
                     blurRadius: 18,
                     offset: const Offset(0, 8),
                   ),
@@ -694,7 +651,7 @@ class _ResourceTile extends StatelessWidget {
                           width: 30,
                           height: 30,
                           decoration: BoxDecoration(
-                            color: AppTheme.chartGreenTint,
+                            color: AppTheme.greenTint(context),
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: const Icon(
@@ -725,9 +682,9 @@ class _ResourceTile extends StatelessWidget {
                         vertical: 8,
                       ),
                       decoration: BoxDecoration(
-                        color: AppTheme.panelColor,
+                        color: AppTheme.panelSurface(context),
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: AppTheme.borderColor),
+                        border: Border.all(color: AppTheme.outline(context)),
                       ),
                       child: Text(
                         url,
@@ -753,13 +710,15 @@ class _BackgroundGlow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DecoratedBox(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            Color(0xFFF7FBFF),
-            AppTheme.shellColor,
+            AppTheme.isDark(context)
+                ? const Color(0xFF0B1627)
+                : const Color(0xFFF7FBFF),
+            AppTheme.shellSurface(context),
           ],
         ),
       ),

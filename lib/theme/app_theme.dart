@@ -28,6 +28,42 @@ class AppTheme {
 
   static ThemeData get dashboardDarkTheme => _buildTheme(Brightness.dark);
 
+  static bool isDark(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark;
+
+  static Color surface(BuildContext context) =>
+      isDark(context) ? darkSurfaceColor : Colors.white;
+
+  static Color panelSurface(BuildContext context) =>
+      isDark(context) ? darkPanelColor : panelColor;
+
+  static Color shellSurface(BuildContext context) =>
+      isDark(context) ? darkShellColor : shellColor;
+
+  static Color outline(BuildContext context) =>
+      isDark(context) ? darkBorderColor : borderColor;
+
+  static Color ink(BuildContext context) =>
+      isDark(context) ? darkInkColor : inkColor;
+
+  static Color muted(BuildContext context) =>
+      isDark(context) ? darkMutedTextColor : mutedTextColor;
+
+  static Color shadow(BuildContext context) =>
+      isDark(context) ? darkSoftShadow : softShadow;
+
+  static Color blueTint(BuildContext context) => isDark(context)
+      ? frozenBlue.withValues(alpha: 0.14)
+      : chartBlueTint;
+
+  static Color greenTint(BuildContext context) => isDark(context)
+      ? safeGreen.withValues(alpha: 0.14)
+      : chartGreenTint;
+
+  static Color redTint(BuildContext context) => isDark(context)
+      ? dangerRed.withValues(alpha: 0.12)
+      : chartRedTint;
+
   static ThemeData _buildTheme(Brightness brightness) {
     final isDark = brightness == Brightness.dark;
     final colorScheme = ColorScheme.fromSeed(
